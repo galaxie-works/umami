@@ -36,6 +36,7 @@ RUN pnpm --allow-build='@prisma/engines' --allow-build='prisma' add \
     dotenv@17.3.1 \
     chalk@5.6.2 \
     semver@7.7.4 \
+    @prisma/config@${PRISMA_VERSION} \
     prisma@${PRISMA_VERSION} \
     @prisma/client@${PRISMA_VERSION} \
     @prisma/adapter-pg@${PRISMA_VERSION}
