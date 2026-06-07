@@ -26,6 +26,20 @@ ENV DATABASE_URL="postgresql://user:pass@localhost:5432/dummy"
 
 RUN npm run build-docker
 
+FROM node:${NODE_IMAGE_VERSION} AS script-deps
+ARG PRISMA_VERSION="7.3.0"
+ARG PNPM_VERSION
+WORKDIR /runtime-deps
+RUN npm install -g pnpm@${PNPM_VERSION}
+RUN pnpm --allow-build='@prisma/engines' --allow-build='prisma' add \
+    npm-run-all@4.1.5 \
+    dotenv@17.3.1 \
+    chalk@5.6.2 \
+    semver@7.7.4 \
+    prisma@${PRISMA_VERSION} \
+    @prisma/client@${PRISMA_VERSION} \
+    @prisma/adapter-pg@${PRISMA_VERSION}
+
 # Production image, copy all the files and run next
 FROM node:${NODE_IMAGE_VERSION} AS runner
 WORKDIR /app
@@ -44,12 +58,6 @@ RUN set -x \
     && apk add --no-cache curl \
     && npm install -g pnpm@${PNPM_VERSION}
 
-# Script dependencies
-RUN pnpm --allow-build='@prisma/engines' --allow-build='prisma' add npm-run-all dotenv chalk semver \
-    prisma@${PRISMA_VERSION} \
-    @prisma/client@${PRISMA_VERSION} \
-    @prisma/adapter-pg@${PRISMA_VERSION}
-
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
@@ -60,6 +68,17 @@ COPY --from=builder /app/generated ./generated
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Script dependencies must be installed after the standalone copy because the
+# traced node_modules tree can replace packages needed by start-docker scripts.
+COPY --from=script-deps /runtime-deps/node_modules/.bin ./node_modules/.bin
+COPY --from=script-deps /runtime-deps/node_modules/.pnpm ./node_modules/.pnpm
+COPY --from=script-deps /runtime-deps/node_modules/@prisma ./node_modules/@prisma
+COPY --from=script-deps /runtime-deps/node_modules/chalk ./node_modules/chalk
+COPY --from=script-deps /runtime-deps/node_modules/dotenv ./node_modules/dotenv
+COPY --from=script-deps /runtime-deps/node_modules/npm-run-all ./node_modules/npm-run-all
+COPY --from=script-deps /runtime-deps/node_modules/prisma ./node_modules/prisma
+COPY --from=script-deps /runtime-deps/node_modules/semver ./node_modules/semver
 
 USER nextjs
 
