@@ -78,10 +78,11 @@ export async function POST(request: Request) {
   const deliveryToken = createOpaqueToken();
   const expiresAt = new Date(Date.now() + invitationTtlDays * 24 * 60 * 60 * 1000);
   const delivery = await sendInvitationEmail(email, deliveryToken);
+  const globalRole = body.teamId ? ROLES.user : body.role;
   const invitation = await createInvitation({
     id: uuid(),
     email,
-    role: body.role,
+    role: globalRole,
     teamId: body.teamId,
     teamRole: body.teamId ? body.teamRole || ROLES.teamMember : null,
     invitedById: auth.user.id,
