@@ -2,6 +2,47 @@
   --font-family: var(--font-inter), sans-serif;
   --primary: oklch(62.3% 0.214 259.815);
   --primary-foreground: oklch(98.5% 0 0);
+  --cosmo-background: oklch(98.5% 0.006 255);
+  --cosmo-surface: oklch(100% 0 0);
+  --cosmo-control: oklch(96.8% 0.008 255);
+  --cosmo-control-hover: oklch(94.2% 0.012 255);
+  --cosmo-border: oklch(89.4% 0.014 255);
+  --cosmo-foreground: oklch(22% 0.026 255);
+  --cosmo-muted-foreground: oklch(49% 0.03 255);
+  --cosmo-action: var(--primary);
+  --cosmo-action-hover: oklch(56.5% 0.224 259.815);
+  --cosmo-action-foreground: var(--primary-foreground);
+  --cosmo-action-soft: oklch(94.5% 0.03 259.815);
+  --cosmo-danger: oklch(58% 0.22 27);
+  --cosmo-danger-foreground: oklch(98.5% 0 0);
+  --cosmo-danger-soft: oklch(95% 0.032 27);
+  --cosmo-success: oklch(50% 0.12 154);
+  --cosmo-success-soft: oklch(94.5% 0.045 154);
+  --cosmo-warning: oklch(55% 0.13 76);
+  --cosmo-warning-soft: oklch(95% 0.05 76);
+  --cosmo-focus-ring: oklch(64% 0.19 259.815);
+  --cosmo-radius-xs: 4px;
+  --cosmo-radius-sm: 6px;
+  --cosmo-radius-md: 8px;
+  --cosmo-radius-full: 999px;
+  --cosmo-shadow-sm: 0 1px 2px rgb(15 23 42 / 6%);
+  --cosmo-shadow-lg: 0 18px 46px rgb(15 23 42 / 16%);
+}
+
+[data-theme="dark"] {
+  --cosmo-background: oklch(18% 0.018 255);
+  --cosmo-surface: oklch(22% 0.02 255);
+  --cosmo-control: oklch(26% 0.022 255);
+  --cosmo-control-hover: oklch(31% 0.024 255);
+  --cosmo-border: oklch(35% 0.025 255);
+  --cosmo-foreground: oklch(96% 0.006 255);
+  --cosmo-muted-foreground: oklch(72% 0.02 255);
+  --cosmo-action-soft: oklch(30% 0.06 259.815);
+  --cosmo-danger-soft: oklch(30% 0.055 27);
+  --cosmo-success-soft: oklch(30% 0.055 154);
+  --cosmo-warning-soft: oklch(31% 0.055 76);
+  --cosmo-shadow-sm: 0 1px 2px rgb(0 0 0 / 20%);
+  --cosmo-shadow-lg: 0 18px 46px rgb(0 0 0 / 40%);
 }
 
 html,
