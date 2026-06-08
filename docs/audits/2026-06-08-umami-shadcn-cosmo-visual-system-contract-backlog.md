@@ -275,4 +275,3 @@ Suggested guard:
 - `git diff --check`.
 - `pnpm agent:validate` only if this repo's agent artifacts are touched; otherwise not required for docs-only backlog.
 - Source scan confirming the backlog contains no raw tokens, cookies, full URLs, invite links, raw IDs, payload rows, replay chunks, or secrets.
-

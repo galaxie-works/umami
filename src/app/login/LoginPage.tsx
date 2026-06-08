@@ -5,9 +5,14 @@ import { ChevronDown, Languages, Moon, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useLocale, useLoginQuery } from '@/components/hooks';
-import { languages } from '@/lib/lang';
 import styles from './CosmolyticsAuth.module.css';
 import { LoginForm } from './LoginForm';
+
+const loginLanguages = [
+  { value: 'pt-BR', label: 'Portugu\u00eas do Brasil' },
+  { value: 'en-US', label: 'English' },
+  { value: 'es-ES', label: 'Espa\u00f1ol' },
+] as const;
 
 export function LoginPage() {
   const { user, isLoading } = useLoginQuery();
@@ -15,6 +20,7 @@ export function LoginPage() {
   const { theme, setTheme } = useTheme();
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const router = useRouter();
+  const activeLanguage = loginLanguages.find(({ value }) => value === locale) || loginLanguages[1];
 
   useEffect(() => {
     if (user) {
@@ -41,12 +47,12 @@ export function LoginPage() {
               type="button"
             >
               <Languages size={16} aria-hidden="true" />
-              <span>{languages[locale]?.label || 'English'}</span>
+              <span>{activeLanguage.label}</span>
               <ChevronDown size={14} aria-hidden="true" />
             </button>
             {isLanguageOpen && (
               <div className={styles.languageMenu} role="listbox" aria-label="Language">
-                {Object.entries(languages).map(([value, { label }]) => (
+                {loginLanguages.map(({ value, label }) => (
                   <button
                     aria-selected={value === locale}
                     className={
