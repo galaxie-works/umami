@@ -1,5 +1,5 @@
 'use client';
-import { Column, Grid, Loading, Row } from '@umami/react-zen';
+import { Loading } from '@umami/react-zen';
 import Script from 'next/script';
 import { useEffect } from 'react';
 import { MobileNav } from '@/app/(main)/MobileNav';
@@ -8,6 +8,7 @@ import { TopNav } from '@/app/(main)/TopNav';
 import { useConfig, useLoginQuery, useNavigation, useTeamQuery } from '@/components/hooks';
 import { LAST_TEAM_CONFIG } from '@/lib/constants';
 import { removeItem, setItem } from '@/lib/storage';
+import styles from './Shell.module.css';
 import { UpdateNotice } from './UpdateNotice';
 
 export function App({ children }) {
@@ -51,21 +52,17 @@ export function App({ children }) {
   }
 
   return (
-    <Grid
-      columns={{ base: '1fr', lg: 'auto 1fr' }}
-      rows={{ base: 'auto 1fr', lg: '1fr' }}
-      height="screen"
-    >
-      <Row display={{ base: 'flex', lg: 'none' }} alignItems="center" gap padding="3">
+    <div className={styles.shell}>
+      <div className={styles.mobileBar}>
         <MobileNav />
-      </Row>
-      <Column display={{ base: 'none', lg: 'flex' }} minHeight="0" style={{ overflow: 'hidden' }}>
+      </div>
+      <aside className={styles.sidebarSlot}>
         <SideNav />
-      </Column>
-      <Column overflowX="hidden" minHeight="0" position="relative">
+      </aside>
+      <main className={styles.main}>
         <TopNav />
-        <Column alignItems="center">{children}</Column>
-      </Column>
+        <div className={styles.content}>{children}</div>
+      </main>
       <UpdateNotice user={user} config={config} />
       {process.env.NODE_ENV === 'production' && !pathname.includes('/share/') && (
         <Script src={`${process.env.basePath || ''}/telemetry.js`} />
@@ -87,6 +84,6 @@ export function App({ children }) {
           src={`${process.env.basePath || ''}/recorder.js`}
         />
       )}
-    </Grid>
+    </div>
   );
 }

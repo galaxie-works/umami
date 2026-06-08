@@ -5,11 +5,12 @@ import { Slash } from '@/components/icons';
 import { BoardSelect } from '@/components/input/BoardSelect';
 import { LinkSelect } from '@/components/input/LinkSelect';
 import { PixelSelect } from '@/components/input/PixelSelect';
-import { TeamsButton } from '@/components/input/TeamsButton';
 import { WebsiteSelect } from '@/components/input/WebsiteSelect';
+import styles from './Shell.module.css';
 
 export function TopNav() {
   const { websiteId, linkId, pixelId, boardId, teamId, router, renderUrl } = useNavigation();
+  const hasEntityContext = websiteId || linkId || pixelId || boardId;
 
   const handleWebsiteChange = (value: string) => {
     router.push(renderUrl(`/websites/${value}`, false));
@@ -27,84 +28,61 @@ export function TopNav() {
     router.push(renderUrl(`/boards/${value}`, false));
   };
 
+  if (!hasEntityContext) {
+    return null;
+  }
+
   return (
-    <Row
-      position="sticky"
-      top="0"
-      alignItems="center"
-      justifyContent="flex-start"
-      paddingY="2"
-      paddingX="3"
-      paddingRight="5"
-      width="100%"
-      zIndex={100}
-      backgroundColor="surface-raised"
-    >
+    <div className={styles.contextBar}>
       <Row alignItems="center">
-        <TeamsButton />
-        {(websiteId || linkId || pixelId || boardId) && (
-          <>
-            <Icon size="sm" color="muted" style={{ opacity: 0.7, margin: '0 6px' }}>
-              <Slash />
-            </Icon>
-            {websiteId && (
-              <WebsiteSelect
-                websiteId={websiteId}
-                teamId={teamId}
-                onChange={handleWebsiteChange}
-                buttonProps={{
-                  variant: 'quiet',
-                  style: { minHeight: 40, minWidth: 200, maxWidth: 200 },
-                }}
-              />
-            )}
-            {linkId && (
-              <LinkSelect
-                linkId={linkId}
-                teamId={teamId}
-                onChange={handleLinkChange}
-                buttonProps={{
-                  variant: 'quiet',
-                  style: { minHeight: 40, minWidth: 200, maxWidth: 200 },
-                }}
-              />
-            )}
-            {pixelId && (
-              <PixelSelect
-                pixelId={pixelId}
-                teamId={teamId}
-                onChange={handlePixelChange}
-                buttonProps={{
-                  variant: 'quiet',
-                  style: { minHeight: 40, minWidth: 200, maxWidth: 200 },
-                }}
-              />
-            )}
-            {boardId && (
-              <BoardSelect
-                boardId={boardId}
-                teamId={teamId}
-                onChange={handleBoardChange}
-                buttonProps={{
-                  variant: 'quiet',
-                  style: { minHeight: 40, minWidth: 200, maxWidth: 200 },
-                }}
-              />
-            )}
-          </>
+        <Icon size="sm" color="muted" style={{ opacity: 0.7, marginRight: 8 }}>
+          <Slash />
+        </Icon>
+        {websiteId && (
+          <WebsiteSelect
+            websiteId={websiteId}
+            teamId={teamId}
+            onChange={handleWebsiteChange}
+            buttonProps={{
+              variant: 'quiet',
+              style: { minHeight: 40, minWidth: 220, maxWidth: 260 },
+            }}
+          />
+        )}
+        {linkId && (
+          <LinkSelect
+            linkId={linkId}
+            teamId={teamId}
+            onChange={handleLinkChange}
+            buttonProps={{
+              variant: 'quiet',
+              style: { minHeight: 40, minWidth: 220, maxWidth: 260 },
+            }}
+          />
+        )}
+        {pixelId && (
+          <PixelSelect
+            pixelId={pixelId}
+            teamId={teamId}
+            onChange={handlePixelChange}
+            buttonProps={{
+              variant: 'quiet',
+              style: { minHeight: 40, minWidth: 220, maxWidth: 260 },
+            }}
+          />
+        )}
+        {boardId && (
+          <BoardSelect
+            boardId={boardId}
+            teamId={teamId}
+            onChange={handleBoardChange}
+            buttonProps={{
+              variant: 'quiet',
+              style: { minHeight: 40, minWidth: 220, maxWidth: 260 },
+            }}
+          />
         )}
       </Row>
-      <div
-        style={{
-          position: 'absolute',
-          bottom: -16,
-          left: 0,
-          right: 0,
-          height: 16,
-          background: 'linear-gradient(to bottom, var(--surface-raised), transparent)',
-          pointerEvents: 'none',
-        }}
-      />
-    </Row>
+    </div>
   );
 }

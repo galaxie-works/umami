@@ -1,0 +1,233 @@
+.shell {
+  display: grid;
+  grid-template-columns: 272px minmax(0, 1fr);
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--primary) 4%, transparent), transparent 280px),
+    var(--surface-raised);
+  color: var(--text-primary);
+}
+
+.mobileBar {
+  display: none;
+}
+
+.sidebarSlot {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+  border-left: 1px solid var(--border-muted);
+  background: color-mix(in oklch, var(--surface-raised) 88%, white 12%);
+}
+
+.contextBar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  border-bottom: 1px solid var(--border-muted);
+  background: color-mix(in oklch, var(--surface-raised) 92%, white 8%);
+  padding: 8px 28px;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+  padding: 16px 0 40px;
+}
+
+.sideNav {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 272px;
+  height: 100vh;
+  border-right: 1px solid var(--border-muted);
+  background: var(--surface-overlay);
+  padding: 14px 12px;
+}
+
+.sideNavCollapsed {
+  width: 76px;
+}
+
+.brandRow,
+.contextArea,
+.bottomArea {
+  border: 1px solid var(--border-muted);
+  border-radius: 8px;
+  background: var(--surface-raised);
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 10px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.brand svg {
+  flex: 0 0 auto;
+}
+
+.collapseButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.collapseButton:hover {
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+}
+
+.contextArea {
+  padding: 6px;
+}
+
+.contextArea button {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.collapsedContext {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  color: var(--text-secondary);
+}
+
+.navScroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 2px 0;
+}
+
+.navGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.navLabel {
+  padding: 8px 10px 2px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 0 10px;
+}
+
+.navLink:hover {
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.navLinkActive {
+  background: color-mix(in oklch, var(--primary) 12%, var(--surface-sunken));
+  color: var(--text-primary);
+}
+
+.navIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.navIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.bottomArea {
+  padding: 6px;
+}
+
+.bottomArea > div,
+.bottomArea [role="button"] {
+  width: 100%;
+}
+
+.subNavFrame {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 1023px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .mobileBar {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    border-bottom: 1px solid var(--border-muted);
+    background: var(--surface-overlay);
+    padding: 8px 12px;
+  }
+
+  .sidebarSlot {
+    display: none;
+  }
+
+  .main {
+    min-height: calc(100vh - 56px);
+    border-left: 0;
+  }
+
+  .contextBar {
+    padding: 8px 12px;
+  }
+
+  .content {
+    padding-top: 12px;
+  }
+}

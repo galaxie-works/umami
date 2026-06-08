@@ -1,7 +1,7 @@
 import { AdminNav } from '@/app/(main)/admin/AdminNav';
 import { SettingsNav } from '@/app/(main)/settings/SettingsNav';
 import { WebsiteNav } from '@/app/(main)/websites/[websiteId]/WebsiteNav';
-import { IconLabel } from '@/components/common/IconLabel';
+import Link from '@/components/common/Link';
 import { useGlobalState, useMessages, useNavigation } from '@/components/hooks';
 import {
   Globe,
@@ -10,26 +10,17 @@ import {
   LinkIcon,
   PanelLeft,
   PanelsLeftBottom,
+  Users,
 } from '@/components/icons';
+import { TeamsButton } from '@/components/input/TeamsButton';
 import { UserButton } from '@/components/input/UserButton';
 import { Logo } from '@/components/svg';
-import {
-  Button,
-  type ButtonProps,
-  Column,
-  Focusable,
-  Icon,
-  Row,
-  Text,
-  Tooltip,
-  TooltipTrigger,
-} from '@umami/react-zen';
-import Link from '@/components/common/Link';
+import styles from './Shell.module.css';
 
-export function SideNav(props: any) {
+export function SideNav() {
   const { t, labels } = useMessages();
   const { pathname, renderUrl, websiteId, teamId } = useNavigation();
-  const [isCollapsed] = useGlobalState('sidenav-collapsed', false);
+  const [isCollapsed, setIsCollapsed] = useGlobalState('sidenav-collapsed', false);
 
   const links = [
     ...(!teamId
@@ -69,93 +60,74 @@ export function SideNav(props: any) {
   ];
 
   return (
-    <Column
-      {...props}
-      backgroundColor="surface-base"
-      border
-      borderRadius
-      paddingX="2"
-      flexGrow="1"
-      minHeight="0"
-      margin="2"
-      style={{
-        width: isCollapsed ? '60px' : '240px',
-        transition: 'width 0.2s ease-in-out',
-        overflow: 'hidden',
-      }}
-    >
-      <Row
-        alignItems="center"
-        justifyContent="space-between"
-        height="60px"
-        style={{ flexShrink: 0 }}
-      >
-        <Row paddingX="3" alignItems="center" justifyContent="space-between" flexGrow="1">
-          {!isCollapsed && (
-            <IconLabel icon={<Logo />}>
-              <Text weight="bold">umami</Text>
-            </IconLabel>
-          )}
-          <PanelButton />
-        </Row>
-      </Row>
-      <Column flexGrow="1" minHeight="0" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-        {websiteId ? (
-          <WebsiteNav websiteId={websiteId} isCollapsed={isCollapsed} />
-        ) : pathname.includes('/settings') ? (
-          <SettingsNav isCollapsed={isCollapsed} />
-        ) : pathname.includes('/admin') ? (
-          <AdminNav />
+    <nav className={classNames(styles.sideNav, isCollapsed && styles.sideNavCollapsed)}>
+      <div className={styles.brandRow}>
+        {!isCollapsed && (
+          <div className={styles.brand}>
+            <Logo />
+            <span>Cosmolytics</span>
+          </div>
+        )}
+        <button
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className={styles.collapseButton}
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          type="button"
+        >
+          <PanelLeft />
+        </button>
+      </div>
+
+      <div className={styles.contextArea}>
+        {isCollapsed ? (
+          <div className={styles.collapsedContext}>
+            <Users />
+          </div>
         ) : (
-          <Column gap="2">
+          <TeamsButton />
+        )}
+      </div>
+
+      <div className={styles.navScroll}>
+        {websiteId ? (
+          <div className={styles.subNavFrame}>
+            <WebsiteNav websiteId={websiteId} isCollapsed={isCollapsed} />
+          </div>
+        ) : pathname.includes('/settings') ? (
+          <div className={styles.subNavFrame}>
+            <SettingsNav isCollapsed={isCollapsed} />
+          </div>
+        ) : pathname.includes('/admin') ? (
+          <AdminNav isCollapsed={isCollapsed} />
+        ) : (
+          <div className={styles.navGroup}>
+            {!isCollapsed && <div className={styles.navLabel}>Workspace</div>}
             {links.map(({ id, path, label, icon }) => {
               const isSelected = pathname.startsWith(renderUrl(path, false));
+
               return (
-                <Link key={id} href={renderUrl(path, false)} role="button">
-                  <TooltipTrigger isDisabled={!isCollapsed} delay={0}>
-                    <Focusable>
-                      <Row
-                        alignItems="center"
-                        hover={{ backgroundColor: 'surface-sunken' }}
-                        backgroundColor={isSelected ? 'surface-sunken' : undefined}
-                        borderRadius
-                        minHeight="40px"
-                      >
-                        <IconLabel
-                          icon={icon}
-                          label={isCollapsed ? '' : label}
-                          weight={isSelected ? 'bold' : undefined}
-                          padding
-                        />
-                      </Row>
-                    </Focusable>
-                    <Tooltip placement="right">{label}</Tooltip>
-                  </TooltipTrigger>
+                <Link
+                  className={classNames(styles.navLink, isSelected && styles.navLinkActive)}
+                  href={renderUrl(path, false)}
+                  key={id}
+                  title={isCollapsed ? label : undefined}
+                >
+                  <span className={styles.navIcon}>{icon}</span>
+                  {!isCollapsed && <span>{label}</span>}
                 </Link>
               );
             })}
-          </Column>
+          </div>
         )}
-      </Column>
-      <Row marginBottom="4" paddingTop="2">
+      </div>
+
+      <div className={styles.bottomArea}>
         <UserButton showText={!isCollapsed} />
-      </Row>
-    </Column>
+      </div>
+    </nav>
   );
 }
 
-const PanelButton = (props: ButtonProps) => {
-  const [isCollapsed, setIsCollapsed] = useGlobalState('sidenav-collapsed', false);
-  return (
-    <Button
-      onPress={() => setIsCollapsed(!isCollapsed)}
-      variant="zero"
-      {...props}
-      style={{ padding: 0 }}
-    >
-      <Icon strokeColor="muted">
-        <PanelLeft />
-      </Icon>
-    </Button>
-  );
-};
+function classNames(...names: Array<string | false | undefined>) {
+  return names.filter(Boolean).join(' ');
+}
