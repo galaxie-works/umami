@@ -1,6 +1,6 @@
 'use client';
 
-import { Ban, MailCheck, RefreshCw, Send } from 'lucide-react';
+import { Ban, Check, ChevronDown, MailCheck, RefreshCw, Send } from 'lucide-react';
 import { FormEvent, useMemo, useState } from 'react';
 import { useToast } from '@umami/react-zen';
 import { useApi, useModified, useMessages } from '@/components/hooks';
@@ -24,7 +24,6 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
   const { t, labels } = useMessages();
   const [email, setEmail] = useState('');
   const [teamRole, setTeamRole] = useState<string>(ROLES.teamMember);
-  const [websiteScope, setWebsiteScope] = useState('all');
   const [selectedWebsiteIds, setSelectedWebsiteIds] = useState<string[]>([]);
 
   const websitesQuery = useQuery({
@@ -41,7 +40,6 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
     mutationFn: (data: Record<string, any>) => post('/admin/invitations', data),
     onSuccess: () => {
       setEmail('');
-      setWebsiteScope('all');
       setSelectedWebsiteIds([]);
       toast('Team invitation queued.');
       touch('team:users');
@@ -78,11 +76,22 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
       role: ROLES.user,
       teamId,
       teamRole,
-      websiteIds: websiteScope === 'selected' ? selectedWebsiteIds : undefined,
+      websiteIds: selectedWebsiteIds.length ? selectedWebsiteIds : undefined,
     });
   };
 
   const websites = websitesQuery.data?.data || [];
+  const setWebsiteSelection = (updater: (current: string[]) => string[]) => {
+    setSelectedWebsiteIds(current => {
+      const next = updater(current);
+
+      if (next.length && teamRole === ROLES.teamManager) {
+        setTeamRole(ROLES.teamMember);
+      }
+
+      return next;
+    });
+  };
 
   return (
     <SettingsCard
@@ -108,7 +117,11 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
               value={teamRole}
             >
               {teamRoleOptions.map(role => (
-                <option key={role} value={role}>
+                <option
+                  disabled={role === ROLES.teamManager && selectedWebsiteIds.length > 0}
+                  key={role}
+                  value={role}
+                >
                   {getTeamRoleLabel(role)}
                 </option>
               ))}
@@ -118,56 +131,57 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
 
         <div className={settingsKitStyles.accessScope}>
           <SettingsField label="Website access">
-            <SettingsSelect
-              onChange={event => {
-                setWebsiteScope(event.currentTarget.value);
-                if (event.currentTarget.value === 'all') {
-                  setSelectedWebsiteIds([]);
-                }
-              }}
-              value={websiteScope}
-            >
-              <option value="all">All team websites</option>
-              <option value="selected">Selected websites</option>
-            </SettingsSelect>
-          </SettingsField>
+            <details className={settingsKitStyles.multiSelect}>
+              <summary className={settingsKitStyles.multiSelectTrigger}>
+                <span>{formatWebsiteSelection(selectedWebsiteIds, websites)}</span>
+                <ChevronDown />
+              </summary>
 
-          {websiteScope === 'selected' && (
-            <div className={settingsKitStyles.checkboxList}>
-              {websites.length === 0 ? (
-                <div className={settingsKitStyles.emptyState}>
-                  <MailCheck />
-                  <span>No websites in this team yet.</span>
-                </div>
-              ) : (
-                websites.map((website: any) => (
-                  <label className={settingsKitStyles.checkboxRow} key={website.id}>
-                    <input
-                      checked={selectedWebsiteIds.includes(website.id)}
-                      onChange={event => {
-                        setSelectedWebsiteIds(current =>
-                          event.currentTarget.checked
-                            ? [...current, website.id]
-                            : current.filter(id => id !== website.id),
-                        );
-                      }}
-                      type="checkbox"
-                    />
-                    <span>{website.name}</span>
-                    <small>{website.domain}</small>
-                  </label>
-                ))
-              )}
-            </div>
-          )}
+              <div className={settingsKitStyles.multiSelectMenu}>
+                <button
+                  className={settingsKitStyles.multiSelectOption}
+                  onClick={() => setSelectedWebsiteIds([])}
+                  type="button"
+                >
+                  <span className={settingsKitStyles.multiSelectCheckbox}>
+                    {selectedWebsiteIds.length === 0 && <Check />}
+                  </span>
+                  <span>All team websites</span>
+                  <small>Default access</small>
+                </button>
+
+                {websites.length === 0 ? (
+                  <div className={settingsKitStyles.emptyState}>
+                    <MailCheck />
+                    <span>No websites in this team yet.</span>
+                  </div>
+                ) : (
+                  websites.map((website: any) => (
+                    <label className={settingsKitStyles.multiSelectOption} key={website.id}>
+                      <input
+                        checked={selectedWebsiteIds.includes(website.id)}
+                        onChange={event => {
+                          setWebsiteSelection(current =>
+                            event.currentTarget.checked
+                              ? [...current, website.id]
+                              : current.filter(id => id !== website.id),
+                          );
+                        }}
+                        type="checkbox"
+                      />
+                      <span>{website.name}</span>
+                      <small>{website.domain}</small>
+                    </label>
+                  ))
+                )}
+              </div>
+            </details>
+          </SettingsField>
         </div>
 
         <div className={settingsKitStyles.actions}>
           <SettingsButton
-            disabled={
-              createInvitation.isPending ||
-              (websiteScope === 'selected' && selectedWebsiteIds.length === 0)
-            }
+            disabled={createInvitation.isPending}
             type="submit"
             variant="primary"
           >
@@ -232,6 +246,22 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
       </div>
     </SettingsCard>
   );
+}
+
+function formatWebsiteSelection(websiteIds: string[], websites: any[]) {
+  if (!websiteIds.length) {
+    return 'All team websites';
+  }
+
+  const names = websiteIds
+    .map(websiteId => websites.find((website: any) => website.id === websiteId)?.name)
+    .filter(Boolean);
+
+  if (names.length === 1) {
+    return names[0];
+  }
+
+  return names.length ? `${names.length} websites selected` : `${websiteIds.length} websites selected`;
 }
 
 function formatWebsiteAccess(websiteIds: unknown, websites: any[]) {

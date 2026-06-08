@@ -187,26 +187,104 @@
   gap: 12px;
 }
 
-.checkboxList {
+.multiSelect {
+  position: relative;
+  width: 100%;
+}
+
+.multiSelectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 36px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  list-style: none;
+  padding: 0 10px;
+}
+
+.multiSelectTrigger::-webkit-details-marker {
+  display: none;
+}
+
+.multiSelectTrigger svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+
+.multiSelect[open] .multiSelectTrigger {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 18%, transparent);
+}
+
+.multiSelectMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  border: 1px solid var(--border-muted);
+  gap: 6px;
+  max-height: 260px;
+  overflow: auto;
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: var(--surface-raised);
-  padding: 10px;
+  background: var(--surface-overlay);
+  box-shadow: 0 12px 30px color-mix(in oklch, black 16%, transparent);
+  padding: 8px;
+  z-index: 20;
 }
 
-.checkboxRow {
+.multiSelectOption {
   display: grid;
-  grid-template-columns: auto minmax(120px, 1fr) minmax(120px, 1fr);
-  gap: 10px;
+  grid-template-columns: 18px minmax(120px, 1fr) minmax(120px, 1fr);
   align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
   color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
   font-size: 13px;
+  padding: 8px;
+  text-align: left;
 }
 
-.checkboxRow small {
+.multiSelectOption:hover {
+  background: var(--surface-raised);
+}
+
+.multiSelectOption input {
+  margin: 0;
+}
+
+.multiSelectCheckbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border-default);
+  border-radius: 3px;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.multiSelectCheckbox svg {
+  width: 12px;
+  height: 12px;
+}
+
+.multiSelectOption small {
   overflow: hidden;
   color: var(--text-secondary);
   text-overflow: ellipsis;
@@ -280,11 +358,11 @@
     flex-direction: column;
   }
 
-  .checkboxRow {
+  .multiSelectOption {
     grid-template-columns: auto minmax(0, 1fr);
   }
 
-  .checkboxRow small {
+  .multiSelectOption small {
     grid-column: 2;
   }
 }

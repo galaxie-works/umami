@@ -1,7 +1,7 @@
 import { hasPermission } from '@/lib/auth';
 import { PERMISSIONS } from '@/lib/constants';
 import type { Auth } from '@/lib/types';
-import { getTeamUser } from '@/queries/prisma';
+import { getScopedWebsiteIds, getTeamUser } from '@/queries/prisma';
 
 export async function canViewTeam({ user }: Auth, teamId: string) {
   if (!user) {
@@ -38,7 +38,9 @@ export async function canUpdateTeam({ user }: Auth, teamId: string) {
 
   const teamUser = await getTeamUser(teamId, user.id);
 
-  return teamUser && hasPermission(teamUser.role, PERMISSIONS.teamUpdate);
+  return (
+    teamUser && hasFullTeamScope(teamUser) && hasPermission(teamUser.role, PERMISSIONS.teamUpdate)
+  );
 }
 
 export async function canDeleteTeam({ user }: Auth, teamId: string) {
@@ -52,7 +54,9 @@ export async function canDeleteTeam({ user }: Auth, teamId: string) {
 
   const teamUser = await getTeamUser(teamId, user.id);
 
-  return teamUser && hasPermission(teamUser.role, PERMISSIONS.teamDelete);
+  return (
+    teamUser && hasFullTeamScope(teamUser) && hasPermission(teamUser.role, PERMISSIONS.teamDelete)
+  );
 }
 
 export async function canDeleteTeamUser({ user }: Auth, teamId: string, removeUserId: string) {
@@ -70,7 +74,9 @@ export async function canDeleteTeamUser({ user }: Auth, teamId: string, removeUs
 
   const teamUser = await getTeamUser(teamId, user.id);
 
-  return teamUser && hasPermission(teamUser.role, PERMISSIONS.teamUpdate);
+  return (
+    teamUser && hasFullTeamScope(teamUser) && hasPermission(teamUser.role, PERMISSIONS.teamUpdate)
+  );
 }
 
 export async function canCreateTeamWebsite({ user }: Auth, teamId: string) {
@@ -84,9 +90,17 @@ export async function canCreateTeamWebsite({ user }: Auth, teamId: string) {
 
   const teamUser = await getTeamUser(teamId, user.id);
 
-  return teamUser && hasPermission(teamUser.role, PERMISSIONS.websiteCreate);
+  return (
+    teamUser && hasFullTeamScope(teamUser) && hasPermission(teamUser.role, PERMISSIONS.websiteCreate)
+  );
 }
 
 export async function canViewAllTeams({ user }: Auth) {
   return user?.isAdmin ?? false;
+}
+
+function hasFullTeamScope(teamUser: any) {
+  const scopedWebsiteIds = getScopedWebsiteIds(teamUser?.websiteIds);
+
+  return !scopedWebsiteIds?.length;
 }

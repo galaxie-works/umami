@@ -19,6 +19,7 @@ export function TeamSettings({ teamId }: { teamId: string }) {
   const { t, labels } = useMessages();
 
   const isAdmin = pathname.includes('/admin');
+  const currentTeamMember = team?.members?.find((member: any) => member.userId === user.id);
 
   const isTeamOwner =
     !!team?.members?.find(({ userId, role }) => role === ROLES.teamOwner && userId === user.id) &&
@@ -26,10 +27,9 @@ export function TeamSettings({ teamId }: { teamId: string }) {
 
   const canEdit =
     user.isAdmin ||
-    (!!team?.members?.find(
-      ({ userId, role }) =>
-        (role === ROLES.teamOwner || role === ROLES.teamManager) && userId === user.id,
-    ) &&
+    (!!currentTeamMember &&
+      (currentTeamMember.role === ROLES.teamOwner || currentTeamMember.role === ROLES.teamManager) &&
+      !hasSelectedWebsiteScope(currentTeamMember) &&
       user.role !== ROLES.viewOnly);
 
   return (
@@ -61,4 +61,8 @@ export function TeamSettings({ teamId }: { teamId: string }) {
       )}
     </Column>
   );
+}
+
+function hasSelectedWebsiteScope(member: any) {
+  return Array.isArray(member?.websiteIds) && member.websiteIds.length > 0;
 }

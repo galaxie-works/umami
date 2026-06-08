@@ -91,6 +91,10 @@ export async function POST(request: Request) {
     return badRequest({ message: 'Website access can only be scoped to a team invitation.' });
   }
 
+  if (body.teamId && body.websiteIds?.length && body.teamRole === ROLES.teamManager) {
+    return badRequest({ message: 'Managers require access to all team websites.' });
+  }
+
   const websiteIds = body.teamId ? await normalizeTeamWebsiteIds(body.teamId, body.websiteIds) : null;
 
   if (body.teamId && body.websiteIds?.length && websiteIds.length !== body.websiteIds.length) {
