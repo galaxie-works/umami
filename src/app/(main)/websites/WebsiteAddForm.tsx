@@ -1,6 +1,11 @@
-import { Button, Form, FormField, FormSubmitButton, Row, TextField } from '@umami/react-zen';
-import { useMessages, useUpdateQuery } from '@/components/hooks';
+'use client';
+
+import type { FormEvent } from 'react';
+import { useUpdateQuery } from '@/components/hooks/queries/useUpdateQuery';
+import { useMessages } from '@/components/hooks/useMessages';
+import { Button, Field, Input } from '@/components/ui';
 import { DOMAIN_REGEX } from '@/lib/constants';
+import styles from './WebsitesPage.module.css';
 
 export function WebsiteAddForm({
   teamId,
@@ -12,49 +17,59 @@ export function WebsiteAddForm({
   onClose?: () => void;
 }) {
   const { t, labels, messages } = useMessages();
-  const { mutateAsync, error, isPending } = useUpdateQuery('/websites', { teamId });
+  const { mutateAsync, error, isPending, toast } = useUpdateQuery('/websites', { teamId });
 
-  const handleSubmit = async (data: any) => {
-    await mutateAsync(data, {
-      onSuccess: async () => {
-        onSave?.();
-        onClose?.();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!event.currentTarget.reportValidity()) {
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+    const name = String(formData.get('name') || '').trim();
+    const domain = String(formData.get('domain') || '').trim();
+
+    await mutateAsync(
+      { name, domain },
+      {
+        onSuccess: async () => {
+          toast(t(messages.saved));
+          onSave?.();
+          onClose?.();
+        },
       },
-    });
+    );
   };
 
   return (
-    <Form onSubmit={handleSubmit} error={error?.message}>
-      <FormField
-        label={t(labels.name)}
-        data-test="input-name"
-        name="name"
-        rules={{ required: t(labels.required) }}
-      >
-        <TextField autoComplete="off" />
-      </FormField>
+    <form className={styles.form} onSubmit={handleSubmit}>
+      <Field label={t(labels.name)}>
+        <Input autoComplete="off" data-test="input-name" name="name" required />
+      </Field>
 
-      <FormField
-        label={t(labels.domain)}
-        data-test="input-domain"
-        name="domain"
-        rules={{
-          required: t(labels.required),
-          pattern: { value: DOMAIN_REGEX, message: t(messages.invalidDomain) },
-        }}
-      >
-        <TextField autoComplete="off" />
-      </FormField>
-      <Row justifyContent="flex-end" paddingTop="3" gap="3">
-        {onClose && (
-          <Button isDisabled={isPending} onPress={onClose}>
+      <Field description={t(messages.invalidDomain)} label={t(labels.domain)}>
+        <Input
+          autoComplete="off"
+          data-test="input-domain"
+          name="domain"
+          pattern={DOMAIN_REGEX.source}
+          required
+        />
+      </Field>
+
+      {error ? <div className={styles.formError}>{error.message}</div> : null}
+
+      <div className={styles.formActions}>
+        {onClose ? (
+          <Button disabled={isPending} onClick={onClose} variant="secondary">
             {t(labels.cancel)}
           </Button>
-        )}
-        <FormSubmitButton data-test="button-submit" isDisabled={false}>
+        ) : null}
+        <Button data-test="button-submit" disabled={isPending} type="submit" variant="primary">
           {t(labels.save)}
-        </FormSubmitButton>
-      </Row>
-    </Form>
+        </Button>
+      </div>
+    </form>
   );
 }

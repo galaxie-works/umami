@@ -1,4 +1,4 @@
-import { useConfig } from '@/components/hooks';
+import { useConfig } from '@/components/hooks/useConfig';
 import { FAVICON_URL, GROUPED_DOMAINS } from '@/lib/constants';
 
 function getHostName(url: string) {

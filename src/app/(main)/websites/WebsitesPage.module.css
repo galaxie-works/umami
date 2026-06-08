@@ -1,0 +1,198 @@
+.page {
+  display: grid;
+  gap: 24px;
+  margin: 0 auto;
+  max-width: 1320px;
+  min-height: 100vh;
+  padding: 28px 24px 40px;
+  width: 100%;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.titleGroup {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+
+.titleGroup h1 {
+  color: var(--cosmo-foreground);
+  font-size: 28px;
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.titleGroup p {
+  color: var(--cosmo-muted-foreground);
+  margin: 6px 0 0;
+}
+
+.titleIcon {
+  align-items: center;
+  background: var(--cosmo-action-soft);
+  border-radius: var(--cosmo-radius-md);
+  color: var(--cosmo-action);
+  display: inline-flex;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.tableStack {
+  display: grid;
+  gap: 16px;
+}
+
+.toolbar {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.searchField {
+  align-items: center;
+  display: grid;
+  flex: 1;
+  max-width: 420px;
+  position: relative;
+}
+
+.searchField svg {
+  color: var(--cosmo-muted-foreground);
+  height: 16px;
+  left: 12px;
+  pointer-events: none;
+  position: absolute;
+  width: 16px;
+}
+
+.searchField input {
+  padding-left: 36px;
+}
+
+.loadingState {
+  display: flex;
+  justify-content: center;
+  min-height: 180px;
+  padding: 48px 0;
+}
+
+.websiteCell {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+}
+
+.favicon {
+  align-items: center;
+  background: var(--cosmo-control);
+  border: 1px solid var(--cosmo-border);
+  border-radius: var(--cosmo-radius-xs);
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+}
+
+.websiteLink,
+.websiteName {
+  color: var(--cosmo-foreground);
+  font-weight: 650;
+}
+
+.websiteLink {
+  text-decoration: none;
+}
+
+.websiteLink:hover,
+.actionLink:hover {
+  color: var(--cosmo-action);
+}
+
+.domain {
+  color: var(--cosmo-muted-foreground);
+}
+
+.actionHead,
+.actionCell {
+  text-align: right;
+}
+
+.actionLink {
+  align-items: center;
+  border-radius: var(--cosmo-radius-sm);
+  color: var(--cosmo-muted-foreground);
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.actionLink:focus-visible {
+  outline: 2px solid var(--cosmo-focus-ring);
+  outline-offset: 2px;
+}
+
+.pager {
+  align-items: center;
+  color: var(--cosmo-muted-foreground);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.pagerControls {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.previousIcon {
+  transform: rotate(180deg);
+}
+
+.form {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.formError {
+  background: var(--cosmo-danger-soft);
+  border-radius: var(--cosmo-radius-sm);
+  color: var(--cosmo-danger);
+  padding: 10px 12px;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 20px 14px 32px;
+  }
+
+  .header,
+  .toolbar,
+  .pager {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .searchField {
+    max-width: none;
+  }
+}

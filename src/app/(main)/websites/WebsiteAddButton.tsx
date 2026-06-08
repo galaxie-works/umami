@@ -1,23 +1,35 @@
-import { useToast } from '@umami/react-zen';
-import { useMessages, useModified } from '@/components/hooks';
+'use client';
+
+import { useState } from 'react';
+import { useMessages } from '@/components/hooks/useMessages';
+import { useModified } from '@/components/hooks/useModified';
 import { Plus } from '@/components/icons';
-import { DialogButton } from '@/components/input/DialogButton';
+import { Button, Dialog } from '@/components/ui';
 import { WebsiteAddForm } from './WebsiteAddForm';
 
 export function WebsiteAddButton({ teamId, onSave }: { teamId: string; onSave?: () => void }) {
-  const { t, labels, messages } = useMessages();
-  const { toast } = useToast();
+  const { t, labels } = useMessages();
   const { touch } = useModified();
+  const [open, setOpen] = useState(false);
 
   const handleSave = async () => {
-    toast(t(messages.saved));
     touch('websites');
     onSave?.();
   };
 
   return (
-    <DialogButton icon={<Plus />} label={t(labels.addWebsite)} variant="primary" width="400px">
-      {({ close }) => <WebsiteAddForm teamId={teamId} onSave={handleSave} onClose={close} />}
-    </DialogButton>
+    <>
+      <Button icon={<Plus />} onClick={() => setOpen(true)} variant="primary">
+        {t(labels.addWebsite)}
+      </Button>
+      <Dialog
+        description={t(labels.websites)}
+        onOpenChange={setOpen}
+        open={open}
+        title={t(labels.addWebsite)}
+      >
+        <WebsiteAddForm onClose={() => setOpen(false)} onSave={handleSave} teamId={teamId} />
+      </Dialog>
+    </>
   );
 }
