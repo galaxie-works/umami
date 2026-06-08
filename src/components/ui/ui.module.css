@@ -1,0 +1,437 @@
+.button,
+.input,
+.dropdownItem,
+.tabsTrigger {
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.button:focus-visible,
+.input:focus-visible,
+.dropdownItem:focus-visible,
+.tabsTrigger:focus-visible,
+.dialog:focus-visible {
+  outline: 2px solid var(--cosmo-focus-ring);
+  outline-offset: 2px;
+}
+
+.button {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--cosmo-radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 600;
+  gap: 8px;
+  justify-content: center;
+  line-height: 1;
+  min-width: 0;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.button-primary {
+  background: var(--cosmo-action);
+  color: var(--cosmo-action-foreground);
+}
+
+.button-primary:hover:not(:disabled) {
+  background: var(--cosmo-action-hover);
+}
+
+.button-secondary {
+  background: var(--cosmo-control);
+  border-color: var(--cosmo-border);
+  color: var(--cosmo-foreground);
+}
+
+.button-secondary:hover:not(:disabled),
+.button-outline:hover:not(:disabled),
+.button-ghost:hover:not(:disabled) {
+  background: var(--cosmo-control-hover);
+}
+
+.button-outline {
+  background: transparent;
+  border-color: var(--cosmo-border);
+  color: var(--cosmo-foreground);
+}
+
+.button-ghost {
+  background: transparent;
+  color: var(--cosmo-muted-foreground);
+}
+
+.button-destructive {
+  background: var(--cosmo-danger);
+  color: var(--cosmo-danger-foreground);
+}
+
+.button-sm {
+  font-size: 12px;
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.button-md {
+  font-size: 14px;
+  min-height: 38px;
+  padding: 0 14px;
+}
+
+.button-lg {
+  font-size: 15px;
+  min-height: 44px;
+  padding: 0 18px;
+}
+
+.button-icon {
+  aspect-ratio: 1;
+  min-height: 36px;
+  padding: 0;
+  width: 36px;
+}
+
+.buttonIcon {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.label {
+  color: var(--cosmo-foreground);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.description,
+.errorText {
+  font-size: 12px;
+}
+
+.description {
+  color: var(--cosmo-muted-foreground);
+}
+
+.errorText {
+  color: var(--cosmo-danger);
+}
+
+.input {
+  background: var(--cosmo-control);
+  border: 1px solid var(--cosmo-border);
+  border-radius: var(--cosmo-radius-sm);
+  color: var(--cosmo-foreground);
+  min-height: 38px;
+  padding: 0 12px;
+  width: 100%;
+}
+
+.input::placeholder {
+  color: var(--cosmo-muted-foreground);
+}
+
+.textarea {
+  min-height: 96px;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
+.select {
+  appearance: auto;
+}
+
+.card {
+  background: var(--cosmo-surface);
+  border: 1px solid var(--cosmo-border);
+  border-radius: var(--cosmo-radius-md);
+  box-shadow: var(--cosmo-shadow-sm);
+}
+
+.cardHeader,
+.cardContent,
+.cardFooter {
+  padding: 18px;
+}
+
+.cardHeader {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.cardContent {
+  padding-top: 0;
+}
+
+.cardFooter {
+  align-items: center;
+  border-top: 1px solid var(--cosmo-border);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.cardTitle,
+.dialogTitle {
+  color: var(--cosmo-foreground);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.cardDescription,
+.dialogDescription {
+  color: var(--cosmo-muted-foreground);
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+
+.badge {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--cosmo-radius-full);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 650;
+  gap: 6px;
+  line-height: 1;
+  min-height: 24px;
+  padding: 0 9px;
+}
+
+.badge-default {
+  background: var(--cosmo-action-soft);
+  color: var(--cosmo-action);
+}
+
+.badge-muted {
+  background: var(--cosmo-control);
+  color: var(--cosmo-muted-foreground);
+}
+
+.badge-success {
+  background: var(--cosmo-success-soft);
+  color: var(--cosmo-success);
+}
+
+.badge-warning {
+  background: var(--cosmo-warning-soft);
+  color: var(--cosmo-warning);
+}
+
+.badge-destructive {
+  background: var(--cosmo-danger-soft);
+  color: var(--cosmo-danger);
+}
+
+.empty {
+  align-items: center;
+  color: var(--cosmo-muted-foreground);
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  padding: 36px 18px;
+  text-align: center;
+}
+
+.emptyIcon {
+  color: var(--cosmo-muted-foreground);
+  display: inline-flex;
+}
+
+.emptyTitle {
+  color: var(--cosmo-foreground);
+  font-weight: 700;
+}
+
+.emptyDescription {
+  max-width: 460px;
+}
+
+.skeleton {
+  animation: cosmo-pulse 1.6s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    var(--cosmo-control),
+    var(--cosmo-control-hover),
+    var(--cosmo-control)
+  );
+  background-size: 220% 100%;
+  border-radius: var(--cosmo-radius-sm);
+  min-height: 16px;
+}
+
+.loading {
+  align-items: center;
+  color: var(--cosmo-muted-foreground);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.spinner {
+  animation: cosmo-spin 800ms linear infinite;
+  border: 2px solid var(--cosmo-border);
+  border-radius: 999px;
+  border-top-color: var(--cosmo-action);
+  height: 18px;
+  width: 18px;
+}
+
+.tableShell {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.table {
+  border-collapse: collapse;
+  color: var(--cosmo-foreground);
+  min-width: 100%;
+}
+
+.tableRow {
+  border-bottom: 1px solid var(--cosmo-border);
+}
+
+.tableRow:hover {
+  background: var(--cosmo-control-hover);
+}
+
+.tableHead,
+.tableCell {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.tableHead {
+  color: var(--cosmo-muted-foreground);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.dialog {
+  background: var(--cosmo-surface);
+  border: 1px solid var(--cosmo-border);
+  border-radius: var(--cosmo-radius-md);
+  box-shadow: var(--cosmo-shadow-lg);
+  color: var(--cosmo-foreground);
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 0;
+  width: 100%;
+}
+
+.dialog::backdrop {
+  background: rgb(15 23 42 / 48%);
+}
+
+.dialogHeader {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--cosmo-border);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 18px;
+}
+
+.dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdownContent {
+  background: var(--cosmo-surface);
+  border: 1px solid var(--cosmo-border);
+  border-radius: var(--cosmo-radius-sm);
+  box-shadow: var(--cosmo-shadow-lg);
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  min-width: 180px;
+  padding: 6px;
+  position: absolute;
+  right: 0;
+  z-index: 20;
+}
+
+.dropdownItem {
+  background: transparent;
+  border: 0;
+  border-radius: var(--cosmo-radius-xs);
+  color: var(--cosmo-foreground);
+  cursor: pointer;
+  min-height: 34px;
+  padding: 0 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.dropdownItem:hover {
+  background: var(--cosmo-control-hover);
+}
+
+.tabs {
+  display: grid;
+  gap: 14px;
+}
+
+.tabsList {
+  align-items: center;
+  background: var(--cosmo-control);
+  border: 1px solid var(--cosmo-border);
+  border-radius: var(--cosmo-radius-sm);
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+}
+
+.tabsTrigger {
+  background: transparent;
+  border: 0;
+  border-radius: var(--cosmo-radius-xs);
+  color: var(--cosmo-muted-foreground);
+  cursor: pointer;
+  font-weight: 650;
+  min-height: 30px;
+  padding: 0 12px;
+}
+
+.tabsTriggerActive {
+  background: var(--cosmo-surface);
+  box-shadow: var(--cosmo-shadow-sm);
+  color: var(--cosmo-foreground);
+}
+
+.tabsContent {
+  min-width: 0;
+}
+
+@keyframes cosmo-pulse {
+  0% {
+    background-position: 220% 0;
+  }
+
+  100% {
+    background-position: -220% 0;
+  }
+}
+
+@keyframes cosmo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
