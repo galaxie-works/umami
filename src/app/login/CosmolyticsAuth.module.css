@@ -162,6 +162,10 @@
   gap: 14px;
 }
 
+.languageWrapper {
+  position: relative;
+}
+
 .languageControl {
   display: inline-flex;
   align-items: center;
@@ -171,17 +175,65 @@
   border-radius: 8px;
   background: var(--surface-overlay);
   color: var(--text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
   padding: 0 12px;
 }
 
-.languageControl select {
-  width: 120px;
+.languageControl:hover {
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+}
+
+.languageControl span {
+  max-width: 142px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.languageMenu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  max-height: 280px;
+  overflow: auto;
+  border: 1px solid var(--border-muted);
+  border-radius: 8px;
+  background: var(--surface-overlay);
+  box-shadow: 0 12px 32px color-mix(in oklch, black 14%, transparent);
+  padding: 6px;
+}
+
+.languageOption,
+.languageOptionActive {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
   border: 0;
   background: transparent;
   color: var(--text-primary);
+  cursor: pointer;
   font: inherit;
-  font-weight: 600;
-  outline: none;
+  font-size: 13px;
+  text-align: left;
+  border-radius: 6px;
+  padding: 0 10px;
+}
+
+.languageOption {
+  color: var(--text-secondary);
+}
+
+.languageOption:hover,
+.languageOptionActive {
+  background: color-mix(in oklch, var(--primary) 14%, var(--surface-sunken));
+  color: var(--text-primary);
 }
 
 .themeToggle {
