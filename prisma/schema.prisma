@@ -27,8 +27,51 @@ model User {
   teams     TeamUser[]
   reports   Report[]
   boards    Board[]    @relation("user")
+  invitationsSent     UserInvitation[] @relation("invitedBy")
+  invitationsAccepted UserInvitation[] @relation("acceptedUser")
+  magicLinks          MagicLink[]
 
   @@map("user")
+}
+
+model UserInvitation {
+  id             String    @id() @map("user_invitation_id") @db.Uuid
+  email          String    @db.VarChar(255)
+  role           String    @db.VarChar(50)
+  tokenHash      String    @unique @map("token_hash") @db.VarChar(128)
+  invitedById    String    @map("invited_by") @db.Uuid
+  acceptedUserId String?   @map("accepted_user_id") @db.Uuid
+  sentAt         DateTime? @map("sent_at") @db.Timestamptz(6)
+  expiresAt      DateTime  @map("expires_at") @db.Timestamptz(6)
+  acceptedAt     DateTime? @map("accepted_at") @db.Timestamptz(6)
+  revokedAt      DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  invitedBy    User  @relation("invitedBy", fields: [invitedById], references: [id])
+  acceptedUser User? @relation("acceptedUser", fields: [acceptedUserId], references: [id])
+
+  @@index([email])
+  @@index([invitedById])
+  @@index([acceptedUserId])
+  @@index([expiresAt])
+  @@map("user_invitation")
+}
+
+model MagicLink {
+  id         String    @id() @map("magic_link_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  tokenHash  String    @unique @map("token_hash") @db.VarChar(128)
+  sentAt     DateTime? @map("sent_at") @db.Timestamptz(6)
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(6)
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("magic_link")
 }
 
 model Session {

@@ -1,5 +1,6 @@
 export * from './board';
 export * from './link';
+export * from './magicLink';
 export * from './pixel';
 export * from './report';
 export * from './segment';
@@ -8,4 +9,5 @@ export * from './share';
 export * from './team';
 export * from './teamUser';
 export * from './user';
+export * from './userInvitation';
 export * from './website';

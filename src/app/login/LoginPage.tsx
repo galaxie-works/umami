@@ -1,9 +1,11 @@
 'use client';
-import { Column, Loading } from '@umami/react-zen';
+
+import { Loading } from '@umami/react-zen';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useLoginQuery } from '@/components/hooks';
 import { LoginForm } from './LoginForm';
+import styles from './CosmolyticsAuth.module.css';
 
 export function LoginPage() {
   const { user, isLoading } = useLoginQuery();
@@ -11,23 +13,33 @@ export function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      router.replace('/');
+      router.push('/');
     }
-  }, [user, router]);
+  }, [user]);
 
-  if (isLoading || user) {
-    return <Loading placement="absolute" />;
+  if (user || isLoading) {
+    return <Loading />;
   }
 
   return (
-    <Column
-      alignItems="center"
-      justifyContent="flex-start"
-      height="100vh"
-      backgroundColor="surface-raised"
-      style={{ paddingTop: '15vh' }}
-    >
-      <LoginForm />
-    </Column>
+    <main className={styles.shell}>
+      <section className={styles.panel}>
+        <div className={styles.brand}>
+          <img
+            alt="Cosmolytics"
+            className={styles.logoMark}
+            src="/brand/cosmolytics-logo-dark.webp"
+          />
+          <h1 className={styles.brandName}>Cosmolytics</h1>
+          <p className={styles.brandCopy}>
+            Analytics, replay and growth intelligence for teams that need clear answers fast.
+          </p>
+        </div>
+        <LoginForm />
+      </section>
+      <section className={styles.art} aria-hidden="true">
+        <div className={styles.artText}>Know what changed, who moved, and where to go next.</div>
+      </section>
+    </main>
   );
 }
