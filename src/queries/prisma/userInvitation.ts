@@ -18,6 +18,8 @@ export function getInvitations(filters: QueryFilters = {}) {
         id: true,
         email: true,
         role: true,
+        teamId: true,
+        teamRole: true,
         sentAt: true,
         expiresAt: true,
         acceptedAt: true,
@@ -34,6 +36,12 @@ export function getInvitations(filters: QueryFilters = {}) {
           select: {
             id: true,
             username: true,
+          },
+        },
+        team: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },
@@ -69,6 +77,8 @@ export function createInvitation(data: Record<string, any>) {
       id: true,
       email: true,
       role: true,
+      teamId: true,
+      teamRole: true,
       sentAt: true,
       expiresAt: true,
       acceptedAt: true,

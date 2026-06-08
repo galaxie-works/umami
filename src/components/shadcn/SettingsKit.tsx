@@ -8,14 +8,16 @@ export function SettingsCard({
   description,
   action,
   children,
+  id,
 }: {
   title: string;
   description?: string;
   action?: ReactNode;
   children: ReactNode;
+  id?: string;
 }) {
   return (
-    <section className={styles.card}>
+    <section className={styles.card} id={id}>
       <div className={styles.header}>
         <div>
           <h2 className={styles.title}>{title}</h2>

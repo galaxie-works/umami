@@ -7,10 +7,13 @@ import { parseRequest } from '@/lib/request';
 import { badRequest, json, unauthorized } from '@/lib/response';
 import {
   acceptInvitation,
+  createTeamUser,
   createUser,
   getInvitationByTokenHash,
+  getTeamUser,
   getUserByUsername,
 } from '@/queries/prisma';
+import { ROLES } from '@/lib/constants';
 
 export async function POST(request: Request) {
   const schema = z.object({
@@ -45,6 +48,10 @@ export async function POST(request: Request) {
       password: hashPassword(body.password),
       role: invitation.role as any,
     });
+  }
+
+  if (invitation.teamId && !(await getTeamUser(invitation.teamId, user.id))) {
+    await createTeamUser(user.id, invitation.teamId, invitation.teamRole || ROLES.teamMember);
   }
 
   const accepted = await acceptInvitation(invitation.id, user.id);

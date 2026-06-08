@@ -3,7 +3,7 @@ import { renderInvitationEmail, sendAuthEmail } from '@/lib/cosmolytics-auth-ema
 import { getAuthLinkBaseUrl } from '@/lib/get-base-url';
 import { parseRequest } from '@/lib/request';
 import { badRequest, json, notFound, unauthorized } from '@/lib/response';
-import { canCreateUser } from '@/permissions';
+import { canCreateUser, canUpdateTeam } from '@/permissions';
 import { getInvitation, updateInvitation } from '@/queries/prisma';
 
 const invitationTtlDays = 7;
@@ -18,15 +18,19 @@ export async function POST(
     return error();
   }
 
-  if (!(await canCreateUser(auth))) {
-    return unauthorized();
-  }
-
   const { invitationId } = await params;
   const invitation = await getInvitation(invitationId);
 
   if (!invitation) {
     return notFound();
+  }
+
+  if (invitation.teamId) {
+    if (!(await canUpdateTeam(auth, invitation.teamId))) {
+      return unauthorized({ message: 'You must be the owner/manager of this team.' });
+    }
+  } else if (!(await canCreateUser(auth))) {
+    return unauthorized();
   }
 
   if (invitation.acceptedAt) {

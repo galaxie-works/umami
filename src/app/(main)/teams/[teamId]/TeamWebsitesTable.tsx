@@ -1,9 +1,6 @@
-import { DataColumn, DataTable, Row } from '@umami/react-zen';
+import { DataColumn, DataTable } from '@umami/react-zen';
 import Link from '@/components/common/Link';
-import { TeamMemberEditButton } from '@/app/(main)/teams/[teamId]/TeamMemberEditButton';
-import { TeamMemberRemoveButton } from '@/app/(main)/teams/[teamId]/TeamMemberRemoveButton';
 import { useMessages } from '@/components/hooks';
-import { ROLES } from '@/lib/constants';
 
 export function TeamWebsitesTable({
   teamId,
@@ -25,26 +22,7 @@ export function TeamWebsitesTable({
       <DataColumn id="createdBy" label={t(labels.createdBy)}>
         {(row: any) => row?.createUser?.username}
       </DataColumn>
-      {allowEdit && (
-        <DataColumn id="action" align="end">
-          {(row: any) => {
-            if (row?.role === ROLES.teamOwner) {
-              return null;
-            }
-
-            return (
-              <Row alignItems="center">
-                <TeamMemberEditButton teamId={teamId} userId={row?.user?.id} role={row?.role} />
-                <TeamMemberRemoveButton
-                  teamId={teamId}
-                  userId={row?.user?.id}
-                  userName={row?.user?.username}
-                />
-              </Row>
-            );
-          }}
-        </DataColumn>
-      )}
+      {allowEdit && <DataColumn id="permission" label="Access">{() => 'Team website'}</DataColumn>}
     </DataTable>
   );
 }

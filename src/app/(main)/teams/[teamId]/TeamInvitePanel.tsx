@@ -3,7 +3,7 @@
 import { Ban, MailCheck, RefreshCw, Send } from 'lucide-react';
 import { FormEvent, useMemo, useState } from 'react';
 import { useToast } from '@umami/react-zen';
-import { useApi, useModified } from '@/components/hooks';
+import { useApi, useModified, useMessages } from '@/components/hooks';
 import {
   SettingsBadge,
   SettingsButton,
@@ -15,21 +15,18 @@ import {
 } from '@/components/shadcn/SettingsKit';
 import { ROLES } from '@/lib/constants';
 
-const roleOptions = [
-  { value: ROLES.user, label: 'User' },
-  { value: ROLES.viewOnly, label: 'View only' },
-  { value: ROLES.admin, label: 'Admin' },
-];
+const teamRoleOptions = [ROLES.teamManager, ROLES.teamMember, ROLES.teamViewOnly];
 
-export function UserInvitePanel() {
+export function TeamInvitePanel({ teamId }: { teamId: string }) {
   const { get, post, useMutation, useQuery } = useApi();
   const { toast } = useToast();
   const { touch } = useModified();
+  const { t, labels } = useMessages();
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState<string>(ROLES.user);
+  const [teamRole, setTeamRole] = useState<string>(ROLES.teamMember);
 
   const invitationsQuery = useQuery({
-    queryKey: ['admin:invitations'],
+    queryKey: ['team:invitations', teamId],
     queryFn: () => get('/admin/invitations', { pageSize: 50 }),
   });
 
@@ -37,8 +34,8 @@ export function UserInvitePanel() {
     mutationFn: (data: Record<string, any>) => post('/admin/invitations', data),
     onSuccess: () => {
       setEmail('');
-      toast('Invitation queued.');
-      touch('users');
+      toast('Team invitation queued.');
+      touch('team:users');
       invitationsQuery.refetch();
     },
   });
@@ -59,36 +56,34 @@ export function UserInvitePanel() {
     },
   });
 
-  const invitations = invitationsQuery.data?.data || [];
   const pendingInvitations = useMemo(
-    () => invitations.filter((invite: any) => invite.status !== 'accepted'),
-    [invitations],
+    () =>
+      (invitationsQuery.data?.data || []).filter(
+        (invite: any) => invite.teamId === teamId && invite.status !== 'accepted',
+      ),
+    [invitationsQuery.data?.data, teamId],
   );
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    createInvitation.mutate({ email, role });
+    createInvitation.mutate({
+      email,
+      role: ROLES.user,
+      teamId,
+      teamRole,
+    });
   };
 
   return (
     <SettingsCard
-      title="Invite user"
-      description="Send access by email and track every pending invitation."
-      action={<SettingsBadge tone="success">Magic link ready</SettingsBadge>}
-      id="invite-user"
+      title="Invite to this team"
+      description="New people join this team directly. Existing users receive the same team membership when they accept."
+      action={<SettingsBadge tone="success">Team scoped</SettingsBadge>}
     >
-      {!invitationsQuery.data?.emailConfigured && (
-        <div className={settingsKitStyles.notice}>
-          Email delivery is not configured yet. Invitations are saved here and can be resent after
-          the webhook is connected.
-        </div>
-      )}
-
-      <form className={settingsKitStyles.inviteForm} onSubmit={handleSubmit}>
+      <form className={settingsKitStyles.grid} onSubmit={handleSubmit}>
         <SettingsField label="Email">
           <SettingsInput
             autoComplete="email"
-            data-test="input-invite-email"
             onChange={event => setEmail(event.currentTarget.value)}
             placeholder="teammate@company.com"
             required
@@ -96,32 +91,30 @@ export function UserInvitePanel() {
             value={email}
           />
         </SettingsField>
-        <SettingsField label="Role">
+        <SettingsField label={t(labels.role)}>
           <SettingsSelect
-            data-test="select-invite-role"
-            onChange={event => setRole(event.currentTarget.value)}
-            value={role}
+            onChange={event => setTeamRole(event.currentTarget.value)}
+            value={teamRole}
           >
-            {roleOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            {teamRoleOptions.map(role => (
+              <option key={role} value={role}>
+                {getTeamRoleLabel(role)}
               </option>
             ))}
           </SettingsSelect>
         </SettingsField>
         <SettingsButton
-          data-test="button-send-invite"
           disabled={createInvitation.isPending}
           type="submit"
           variant="primary"
         >
           <Send />
-          Send invite
+          Invite
         </SettingsButton>
       </form>
 
       <div className={settingsKitStyles.listHeader}>
-        <span>Pending invitations</span>
+        <span>Pending team invitations</span>
         <SettingsBadge>{pendingInvitations.length}</SettingsBadge>
       </div>
 
@@ -129,7 +122,7 @@ export function UserInvitePanel() {
         {pendingInvitations.length === 0 ? (
           <div className={settingsKitStyles.emptyState}>
             <MailCheck />
-            <span>No pending invitations.</span>
+            <span>No pending invitations for this team.</span>
           </div>
         ) : (
           pendingInvitations.map((invite: any) => (
@@ -137,7 +130,8 @@ export function UserInvitePanel() {
               <div className={settingsKitStyles.stack}>
                 <span className={settingsKitStyles.email}>{invite.email}</span>
                 <span className={settingsKitStyles.meta}>
-                  {invite.role} / {invite.status} / expires {formatDate(invite.expiresAt)}
+                  {getTeamRoleLabel(invite.teamRole)} / {invite.status} / expires{' '}
+                  {formatDate(invite.expiresAt)}
                 </span>
               </div>
               <div className={settingsKitStyles.actions}>
@@ -171,6 +165,17 @@ export function UserInvitePanel() {
       </div>
     </SettingsCard>
   );
+}
+
+function getTeamRoleLabel(role: string) {
+  switch (role) {
+    case ROLES.teamManager:
+      return 'Manager';
+    case ROLES.teamViewOnly:
+      return 'View only';
+    default:
+      return 'Member';
+  }
 }
 
 function formatDate(value?: string) {

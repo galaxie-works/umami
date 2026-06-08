@@ -37,6 +37,12 @@
   gap: 12px;
 }
 
+.inviteForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -120,6 +126,17 @@
   padding-top: 12px;
 }
 
+.inviteRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border-muted);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  padding: 12px;
+}
+
 .stack {
   display: flex;
   flex-direction: column;
@@ -146,6 +163,24 @@
   flex-wrap: wrap;
 }
 
+.listHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--border-muted);
+  padding-top: 14px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.inviteList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -170,6 +205,22 @@
   padding-top: 14px;
 }
 
+.emptyState {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px dashed var(--border-default);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 14px;
+}
+
+.emptyState svg {
+  width: 16px;
+  height: 16px;
+}
+
 .notice {
   border: 1px solid color-mix(in oklch, var(--primary) 24%, var(--border-default));
   border-radius: 6px;
@@ -182,7 +233,8 @@
 
 @media (max-width: 720px) {
   .header,
-  .row {
+  .row,
+  .inviteRow {
     align-items: stretch;
     flex-direction: column;
   }

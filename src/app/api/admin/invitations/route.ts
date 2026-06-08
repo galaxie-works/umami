@@ -9,9 +9,10 @@ import { uuid } from '@/lib/crypto';
 import { getAuthLinkBaseUrl } from '@/lib/get-base-url';
 import { getQueryFilters, parseRequest } from '@/lib/request';
 import { badRequest, json, unauthorized } from '@/lib/response';
-import { pagingParams, searchParams, userRoleParam } from '@/lib/schema';
-import { canCreateUser, canViewUsers } from '@/permissions';
-import { createInvitation, getInvitations, getUserByUsername } from '@/queries/prisma';
+import { pagingParams, searchParams, teamRoleParam, userRoleParam } from '@/lib/schema';
+import { canCreateUser, canUpdateTeam, canViewUsers } from '@/permissions';
+import { createInvitation, getInvitations, getTeamUser, getUserByUsername } from '@/queries/prisma';
+import { ROLES } from '@/lib/constants';
 
 const invitationTtlDays = 7;
 
@@ -44,7 +45,9 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const schema = z.object({
     email: z.string().email().max(255),
-    role: userRoleParam,
+    role: userRoleParam.default(ROLES.user),
+    teamId: z.uuid().optional(),
+    teamRole: teamRoleParam.optional(),
   });
 
   const { auth, body, error } = await parseRequest(request, schema);
@@ -53,15 +56,23 @@ export async function POST(request: Request) {
     return error();
   }
 
-  if (!(await canCreateUser(auth))) {
+  if (body.teamId) {
+    if (!(await canUpdateTeam(auth, body.teamId))) {
+      return unauthorized({ message: 'You must be the owner/manager of this team.' });
+    }
+  } else if (!(await canCreateUser(auth))) {
     return unauthorized();
   }
 
   const email = normalizeLoginIdentifier(body.email);
   const existingUser = await getUserByUsername(email, { showDeleted: true });
 
-  if (existingUser) {
+  if (existingUser && !body.teamId) {
     return badRequest({ message: 'User already exists.' });
+  }
+
+  if (existingUser && body.teamId && (await getTeamUser(body.teamId, existingUser.id))) {
+    return badRequest({ message: 'User is already a member of this team.' });
   }
 
   const deliveryToken = createOpaqueToken();
@@ -71,6 +82,8 @@ export async function POST(request: Request) {
     id: uuid(),
     email,
     role: body.role,
+    teamId: body.teamId,
+    teamRole: body.teamId ? body.teamRole || ROLES.teamMember : null,
     invitedById: auth.user.id,
     tokenHash: hashAuthToken(deliveryToken),
     expiresAt,
@@ -114,6 +127,8 @@ function toInvitationView(invitation: any) {
     id: invitation.id,
     email: invitation.email,
     role: invitation.role,
+    teamId: invitation.teamId,
+    teamRole: invitation.teamRole,
     status,
     sentAt: invitation.sentAt,
     expiresAt: invitation.expiresAt,
@@ -122,6 +137,7 @@ function toInvitationView(invitation: any) {
     createdAt: invitation.createdAt,
     invitedBy: invitation.invitedBy,
     acceptedUser: invitation.acceptedUser,
+    team: invitation.team,
     canResend: !invitation.acceptedAt,
     canRevoke: !invitation.acceptedAt && !invitation.revokedAt,
   };

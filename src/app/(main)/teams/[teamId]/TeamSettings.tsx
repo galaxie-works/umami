@@ -6,9 +6,11 @@ import { useLoginQuery, useMessages, useNavigation, useTeam } from '@/components
 import { Users } from '@/components/icons';
 import { ROLES } from '@/lib/constants';
 import { TeamsMemberAddButton } from '../TeamsMemberAddButton';
+import { TeamInvitePanel } from './TeamInvitePanel';
 import { TeamEditForm } from './TeamEditForm';
 import { TeamManage } from './TeamManage';
 import { TeamMembersDataTable } from './TeamMembersDataTable';
+import { TeamWebsitesDataTable } from './TeamWebsitesDataTable';
 
 export function TeamSettings({ teamId }: { teamId: string }) {
   const team: any = useTeam();
@@ -38,12 +40,19 @@ export function TeamSettings({ teamId }: { teamId: string }) {
       <Panel>
         <TeamEditForm teamId={teamId} allowEdit={canEdit} showAccessCode={canEdit} />
       </Panel>
+      {canEdit && <TeamInvitePanel teamId={teamId} />}
       <Panel>
         <Row alignItems="center" justifyContent="space-between">
           <Heading size="base">{t(labels.members)}</Heading>
           {isAdmin && <TeamsMemberAddButton teamId={teamId} />}
         </Row>
         <TeamMembersDataTable teamId={teamId} allowEdit={canEdit} />
+      </Panel>
+      <Panel>
+        <Row alignItems="center" justifyContent="space-between">
+          <Heading size="base">{t(labels.websites)}</Heading>
+        </Row>
+        <TeamWebsitesDataTable teamId={teamId} allowEdit={canEdit} />
       </Panel>
       {isTeamOwner && (
         <Panel>
