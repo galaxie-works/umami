@@ -1,7 +1,6 @@
-import { headers } from 'next/headers';
 import { createOpaqueToken, hashAuthToken } from '@/lib/auth-tokens';
 import { renderInvitationEmail, sendAuthEmail } from '@/lib/cosmolytics-auth-email';
-import { getBaseUrl } from '@/lib/get-base-url';
+import { getAuthLinkBaseUrl } from '@/lib/get-base-url';
 import { parseRequest } from '@/lib/request';
 import { badRequest, json, notFound, unauthorized } from '@/lib/response';
 import { canCreateUser } from '@/permissions';
@@ -50,8 +49,7 @@ export async function POST(
 }
 
 async function sendInvitationEmail(email: string, token: string) {
-  const headerStore = await headers();
-  const baseUrl = getBaseUrl(headerStore);
+  const baseUrl = getAuthLinkBaseUrl();
   const url = new URL(`${process.env.basePath || ''}/invite`, baseUrl);
   url.searchParams.set('token', token);
   const emailBody = renderInvitationEmail({ url: url.toString() });

@@ -38,3 +38,22 @@ export function getBaseUrl(headers?: HeaderStore) {
     return new URL(HOMEPAGE_URL);
   }
 }
+
+export function getAuthLinkBaseUrl() {
+  const configuredUrl =
+    process.env.AUTH_PUBLIC_BASE_URL || process.env.APP_URL || process.env.BASE_URL;
+
+  if (configuredUrl) {
+    try {
+      const url = new URL(configuredUrl);
+
+      if (url.protocol === 'https:' || url.protocol === 'http:') {
+        return url;
+      }
+    } catch {
+      // Fall back below when the configured public origin is malformed.
+    }
+  }
+
+  return new URL(HOMEPAGE_URL);
+}

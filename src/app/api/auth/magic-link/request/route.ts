@@ -1,4 +1,3 @@
-import { headers } from 'next/headers';
 import { z } from 'zod';
 import { createOpaqueToken, hashAuthToken, normalizeLoginIdentifier } from '@/lib/auth-tokens';
 import {
@@ -7,7 +6,7 @@ import {
   sendAuthEmail,
 } from '@/lib/cosmolytics-auth-email';
 import { uuid } from '@/lib/crypto';
-import { getBaseUrl } from '@/lib/get-base-url';
+import { getAuthLinkBaseUrl } from '@/lib/get-base-url';
 import { parseRequest } from '@/lib/request';
 import { json } from '@/lib/response';
 import { createMagicLink, getUserByUsername, markMagicLinkSent, pruneMagicLinks } from '@/queries/prisma';
@@ -53,8 +52,7 @@ export async function POST(request: Request) {
 }
 
 async function sendMagicLinkEmail(email: string, token: string) {
-  const headerStore = await headers();
-  const baseUrl = getBaseUrl(headerStore);
+  const baseUrl = getAuthLinkBaseUrl();
   const url = new URL(`${process.env.basePath || ''}/magic-login`, baseUrl);
   url.searchParams.set('token', token);
   const emailBody = renderMagicLinkEmail({ url: url.toString() });
