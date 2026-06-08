@@ -1,8 +1,9 @@
 'use client';
 
+import { useTheme } from '@umami/react-zen';
 import { KeyRound, Mail } from 'lucide-react';
-import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { type FormEvent, useState } from 'react';
 import { useApi } from '@/components/hooks';
 import { setClientAuthToken } from '@/lib/client';
 import { setUser } from '@/store/app';
@@ -13,7 +14,8 @@ type LoginMode = 'password' | 'magic';
 export function LoginForm() {
   const router = useRouter();
   const { post, useMutation } = useApi();
-  const [mode, setMode] = useState<LoginMode>('password');
+  const { theme } = useTheme();
+  const [mode, setMode] = useState<LoginMode>('magic');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [notice, setNotice] = useState('');
@@ -54,28 +56,25 @@ export function LoginForm() {
 
   return (
     <div className={styles.card}>
-      <div className={styles.tabs} role="tablist" aria-label="Login method">
-        <button
-          className={`${styles.tab} ${mode === 'password' ? styles.tabActive : ''}`}
-          onClick={() => setMode('password')}
-          role="tab"
-          type="button"
-        >
-          Password
-        </button>
-        <button
-          className={`${styles.tab} ${mode === 'magic' ? styles.tabActive : ''}`}
-          onClick={() => setMode('magic')}
-          role="tab"
-          type="button"
-        >
-          Magic link
-        </button>
+      <div className={styles.brand}>
+        <img
+          alt="Cosmolytics"
+          className={styles.logoMark}
+          src={
+            theme === 'dark'
+              ? '/brand/cosmolytics-logo-dark.webp'
+              : '/brand/cosmolytics-logo-light.webp'
+          }
+        />
+        <p className={styles.brandCopy}>This admin area is for authorized personnel only.</p>
+        <p className={styles.securityCopy}>
+          Unauthorized access attempts will be ejected into deep space.
+        </p>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.field}>
-          <span className={styles.label}>Email or username</span>
+          <span className={styles.label}>{mode === 'magic' ? 'E-mail' : 'Email or username'}</span>
           <input
             autoComplete="username"
             className={styles.input}
@@ -106,7 +105,18 @@ export function LoginForm() {
 
         <button className={styles.button} data-test="button-submit" disabled={isPending}>
           {mode === 'password' ? <KeyRound /> : <Mail />}
-          {mode === 'password' ? 'Log in' : 'Send magic link'}
+          {mode === 'password' ? 'Log in' : 'Get a magic login link'}
+        </button>
+
+        <button
+          className={styles.fallbackButton}
+          onClick={() => {
+            setNotice('');
+            setMode(mode === 'magic' ? 'password' : 'magic');
+          }}
+          type="button"
+        >
+          {mode === 'magic' ? 'Use password instead' : 'Use magic link instead'}
         </button>
       </form>
     </div>
