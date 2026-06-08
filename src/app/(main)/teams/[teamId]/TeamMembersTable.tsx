@@ -1,5 +1,13 @@
-import { DataColumn, DataTable, Row } from '@umami/react-zen';
 import { useMessages } from '@/components/hooks';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { ROLES } from '@/lib/constants';
 import { TeamMemberEditButton } from './TeamMemberEditButton';
 import { TeamMemberRemoveButton } from './TeamMemberRemoveButton';
@@ -23,40 +31,61 @@ export function TeamMembersTable({
   };
 
   return (
-    <DataTable data={data}>
-      <DataColumn id="username" label={t(labels.username)}>
-        {(row: any) => row?.user?.username}
-      </DataColumn>
-      <DataColumn id="role" label={t(labels.role)}>
-        {(row: any) => roles[row?.role]}
-      </DataColumn>
-      <DataColumn id="websiteAccess" label="Website access">
-        {(row: any) =>
-          Array.isArray(row?.websiteIds) && row.websiteIds.length > 0
-            ? `${row.websiteIds.length} selected`
-            : 'All websites'
-        }
-      </DataColumn>
-      {allowEdit && (
-        <DataColumn id="action" align="end">
-          {(row: any) => {
-            if (row?.role === ROLES.teamOwner) {
-              return null;
-            }
-
-            return (
-              <Row alignItems="center" maxHeight="20px">
-                <TeamMemberEditButton teamId={teamId} userId={row?.user?.id} role={row?.role} />
-                <TeamMemberRemoveButton
-                  teamId={teamId}
-                  userId={row?.user?.id}
-                  userName={row?.user?.username}
-                />
-              </Row>
-            );
-          }}
-        </DataColumn>
-      )}
-    </DataTable>
+    <div className="overflow-hidden rounded-lg border border-border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t(labels.username)}</TableHead>
+            <TableHead>{t(labels.role)}</TableHead>
+            <TableHead>Website access</TableHead>
+            {allowEdit && <TableHead className="text-right">Actions</TableHead>}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.length === 0 ? (
+            <TableRow>
+              <TableCell
+                className="h-24 text-center text-muted-foreground"
+                colSpan={allowEdit ? 4 : 3}
+              >
+                No team members found.
+              </TableCell>
+            </TableRow>
+          ) : (
+            data.map((row: any) => (
+              <TableRow key={row?.id || row?.user?.id}>
+                <TableCell className="font-medium">{row?.user?.username}</TableCell>
+                <TableCell>{roles[row?.role]}</TableCell>
+                <TableCell>
+                  <Badge variant="outline">
+                    {Array.isArray(row?.websiteIds) && row.websiteIds.length > 0
+                      ? `${row.websiteIds.length} selected`
+                      : 'All websites'}
+                  </Badge>
+                </TableCell>
+                {allowEdit && (
+                  <TableCell className="text-right">
+                    {row?.role !== ROLES.teamOwner && (
+                      <div className="flex justify-end gap-1">
+                        <TeamMemberEditButton
+                          teamId={teamId}
+                          userId={row?.user?.id}
+                          role={row?.role}
+                        />
+                        <TeamMemberRemoveButton
+                          teamId={teamId}
+                          userId={row?.user?.id}
+                          userName={row?.user?.username}
+                        />
+                      </div>
+                    )}
+                  </TableCell>
+                )}
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

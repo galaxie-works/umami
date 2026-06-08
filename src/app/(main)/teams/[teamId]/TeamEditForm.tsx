@@ -1,15 +1,9 @@
-import {
-  Button,
-  Form,
-  FormButtons,
-  FormField,
-  FormSubmitButton,
-  Row,
-  TextField,
-} from '@umami/react-zen';
-import { IconLabel } from '@/components/common/IconLabel';
+import { type FormEvent, useEffect, useMemo, useState } from 'react';
 import { useMessages, useTeam, useUpdateQuery } from '@/components/hooks';
 import { RefreshCw } from '@/components/icons';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { getRandomChars } from '@/lib/generate';
 import styles from './TeamEditForm.module.css';
 
@@ -28,60 +22,96 @@ export function TeamEditForm({
 }) {
   const team = useTeam();
   const { t, labels, messages, getErrorMessage } = useMessages();
+  const initialValues = useMemo(
+    () => ({
+      accessCode: team?.accessCode || '',
+      id: team?.id || teamId,
+      name: team?.name || '',
+    }),
+    [team?.accessCode, team?.id, team?.name, teamId],
+  );
+  const [name, setName] = useState(initialValues.name);
+  const [accessCode, setAccessCode] = useState(initialValues.accessCode);
+
+  useEffect(() => {
+    setName(initialValues.name);
+    setAccessCode(initialValues.accessCode);
+  }, [initialValues.accessCode, initialValues.name]);
 
   const { mutateAsync, error, isPending, touch, toast } = useUpdateQuery(`/teams/${teamId}`);
 
-  const handleSubmit = async (data: any) => {
-    await mutateAsync(data, {
-      onSuccess: async () => {
-        toast(t(messages.saved));
-        touch('teams');
-        touch(`teams:${teamId}`);
-        onSave?.();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    await mutateAsync(
+      {
+        ...team,
+        accessCode,
+        name,
       },
-    });
+      {
+        onSuccess: async () => {
+          toast(t(messages.saved));
+          touch('teams');
+          touch(`teams:${teamId}`);
+          onSave?.();
+        },
+      },
+    );
   };
 
   return (
-    <Form onSubmit={handleSubmit} error={getErrorMessage(error)} defaultValues={{ ...team }}>
-      {({ setValue }) => {
-        return (
-          <>
-            <FormField name="name" label={t(labels.name)} rules={{ required: t(labels.required) }}>
-              <TextField isReadOnly={!allowEdit} />
-            </FormField>
-            <details className={styles.advanced}>
-              <summary className={styles.summary}>Advanced</summary>
-              <div className={styles.advancedBody}>
-                <FormField name="id" label={t(labels.teamId)}>
-                  <TextField isReadOnly allowCopy />
-                </FormField>
-                {showAccessCode && (
-                  <Row alignItems="flex-end" gap>
-                    <FormField name="accessCode" label={t(labels.accessCode)} style={{ flex: 1 }}>
-                      <TextField isReadOnly allowCopy />
-                    </FormField>
-                    {allowEdit && (
-                      <Button
-                        onPress={() => setValue('accessCode', generateId(), { shouldDirty: true })}
-                      >
-                        <IconLabel icon={<RefreshCw />} label={t(labels.regenerate)} />
-                      </Button>
-                    )}
-                  </Row>
+    <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+      <div className="grid gap-2">
+        <Label htmlFor="team-name">{t(labels.name)}</Label>
+        <Input
+          id="team-name"
+          onChange={event => setName(event.currentTarget.value)}
+          readOnly={!allowEdit}
+          required
+          value={name}
+        />
+      </div>
+
+      <details className={styles.advanced}>
+        <summary className={styles.summary}>Advanced</summary>
+        <div className={styles.advancedBody}>
+          <div className="grid gap-2">
+            <Label htmlFor="team-id">{t(labels.teamId)}</Label>
+            <Input id="team-id" readOnly value={initialValues.id} />
+          </div>
+          {showAccessCode && (
+            <div className="grid gap-2">
+              <Label htmlFor="team-access-code">{t(labels.accessCode)}</Label>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Input className="flex-1" id="team-access-code" readOnly value={accessCode} />
+                {allowEdit && (
+                  <Button
+                    onClick={() => setAccessCode(generateId())}
+                    type="button"
+                    variant="outline"
+                  >
+                    <RefreshCw className="size-4" />
+                    {t(labels.regenerate)}
+                  </Button>
                 )}
               </div>
-            </details>
-            {allowEdit && (
-              <FormButtons justifyContent="flex-end">
-                <FormSubmitButton variant="primary" isPending={isPending}>
-                  {t(labels.save)}
-                </FormSubmitButton>
-              </FormButtons>
-            )}
-          </>
-        );
-      }}
-    </Form>
+            </div>
+          )}
+        </div>
+      </details>
+
+      {getErrorMessage(error) && (
+        <p className="text-sm text-destructive">{getErrorMessage(error)}</p>
+      )}
+
+      {allowEdit && (
+        <div className="flex justify-end">
+          <Button disabled={isPending} type="submit">
+            {t(labels.save)}
+          </Button>
+        </div>
+      )}
+    </form>
   );
 }
