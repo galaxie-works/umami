@@ -1,0 +1,8 @@
+{"ts":"2026-06-08T01:19:35-03:00","agent":"QA3/Rhea","event":"target_confirmed","branch":"origin/atlas/umami-parallel-lane-contracts","commit":"3383cfcb423b1fd5b5a6df03108a881703c0f21e","route":"/login","sanitized":true}
+{"ts":"2026-06-08T01:19:35-03:00","agent":"QA3/Rhea","event":"runtime_check","result":"login_route_http_200","no_deploy_restart_db_or_prod_mutation":true}
+{"ts":"2026-06-08T01:19:35-03:00","agent":"QA3/Rhea","event":"capture_matrix","viewports":["desktop","mobile"],"themes":["light","dark"],"states":["default","language_menu","ptbr","english","es"],"ui_only":true}
+{"ts":"2026-06-08T01:19:35-03:00","agent":"QA3/Rhea","event":"language_dropdown_result","status":"pass","options":["Portugues do Brasil","English","Espanol"],"exactly_three":true,"native_select_count":0}
+{"ts":"2026-06-08T01:19:35-03:00","agent":"QA3/Rhea","event":"localized_copy_result","status":"pass","languages":["ptbr","english","es"],"copy_changes_beyond_picker_label":true}
+{"ts":"2026-06-08T01:19:35-03:00","agent":"QA3/Rhea","event":"logo_theme_result","status":"pass","light_asset":"cosmolytics-logo-light.webp","dark_asset":"cosmolytics-logo-dark.webp"}
+{"ts":"2026-06-08T01:19:35-03:00","agent":"QA3/Rhea","event":"auth_action_result","status":"pass","magic_link_primary":true,"password_fallback_discreet":true}
+{"ts":"2026-06-08T01:19:35-03:00","agent":"QA3/Rhea","event":"gaps_recorded","status":"passed_with_P2_notes","p1_count":0,"p2_count":2,"gap_ids":["QA3-3383-P2-001","QA3-3383-P2-002"]}

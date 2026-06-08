@@ -1,0 +1,112 @@
+{
+  "artifact": "qa3-login-3383cfcb-runtime",
+  "created_at": "2026-06-08T01:19:35-03:00",
+  "classification": "completed_with_p2_notes",
+  "target": {
+    "branch": "origin/atlas/umami-parallel-lane-contracts",
+    "commit": "3383cfcb423b1fd5b5a6df03108a881703c0f21e",
+    "route": "/login",
+    "runtime": "localhost authenticated session as available"
+  },
+  "constraints": {
+    "ui_only_screenshots": true,
+    "browser_chrome_excluded": true,
+    "no_credential_material": true,
+    "no_full_urls": true,
+    "no_deploy_restart_db_or_prod_mutation": true
+  },
+  "screenshots": [
+    { "file": "login-desktop-light-default.png", "viewport": "desktop", "theme": "light", "state": "default English login card" },
+    { "file": "login-desktop-light-language-menu.png", "viewport": "desktop", "theme": "light", "state": "language menu open" },
+    { "file": "login-desktop-light-ptbr.png", "viewport": "desktop", "theme": "light", "state": "Portuguese copy selected" },
+    { "file": "login-desktop-light-english.png", "viewport": "desktop", "theme": "light", "state": "English copy selected" },
+    { "file": "login-desktop-light-es.png", "viewport": "desktop", "theme": "light", "state": "Spanish copy selected" },
+    { "file": "login-desktop-dark-default.png", "viewport": "desktop", "theme": "dark", "state": "default English login card" },
+    { "file": "login-desktop-dark-language-menu.png", "viewport": "desktop", "theme": "dark", "state": "language menu open" },
+    { "file": "login-desktop-dark-ptbr.png", "viewport": "desktop", "theme": "dark", "state": "Portuguese copy selected" },
+    { "file": "login-desktop-dark-english.png", "viewport": "desktop", "theme": "dark", "state": "English copy selected" },
+    { "file": "login-desktop-dark-es.png", "viewport": "desktop", "theme": "dark", "state": "Spanish copy selected" },
+    { "file": "login-mobile-light-default.png", "viewport": "mobile", "theme": "light", "state": "default English login card" },
+    { "file": "login-mobile-light-language-menu.png", "viewport": "mobile", "theme": "light", "state": "language menu open" },
+    { "file": "login-mobile-light-ptbr.png", "viewport": "mobile", "theme": "light", "state": "Portuguese copy selected" },
+    { "file": "login-mobile-light-english.png", "viewport": "mobile", "theme": "light", "state": "English copy selected" },
+    { "file": "login-mobile-light-es.png", "viewport": "mobile", "theme": "light", "state": "Spanish copy selected" },
+    { "file": "login-mobile-dark-default.png", "viewport": "mobile", "theme": "dark", "state": "default English login card" },
+    { "file": "login-mobile-dark-language-menu.png", "viewport": "mobile", "theme": "dark", "state": "language menu open" },
+    { "file": "login-mobile-dark-ptbr.png", "viewport": "mobile", "theme": "dark", "state": "Portuguese copy selected" },
+    { "file": "login-mobile-dark-english.png", "viewport": "mobile", "theme": "dark", "state": "English copy selected" },
+    { "file": "login-mobile-dark-es.png", "viewport": "mobile", "theme": "dark", "state": "Spanish copy selected" }
+  ],
+  "inventory": [
+    {
+      "component": "login layout",
+      "status": "pass",
+      "evidence": ["login-desktop-light-default.png", "login-mobile-dark-default.png"],
+      "expected": "Cosmo legacy centered login card, no split hero",
+      "actual": "Centered card composition is preserved on desktop and mobile in light and dark themes."
+    },
+    {
+      "component": "primary and fallback auth actions",
+      "status": "pass",
+      "evidence": ["login-desktop-light-default.png", "login-desktop-dark-default.png"],
+      "expected": "Magic-link CTA is primary; password path is discreet fallback",
+      "actual": "Magic-link button remains primary and password action remains secondary text-style fallback."
+    },
+    {
+      "component": "language dropdown",
+      "status": "pass",
+      "evidence": ["login-desktop-light-language-menu.png", "login-desktop-dark-language-menu.png", "login-mobile-light-language-menu.png", "login-mobile-dark-language-menu.png"],
+      "expected": "Custom shadcn-style dropdown with exactly Portugues do Brasil, English, Espanol",
+      "actual": "Custom option list exposes exactly three visible options: Portugues do Brasil, English, Espanol. Native select count was zero."
+    },
+    {
+      "component": "localized login copy",
+      "status": "pass",
+      "evidence": ["login-desktop-light-ptbr.png", "login-desktop-light-english.png", "login-desktop-light-es.png", "login-mobile-dark-ptbr.png", "login-mobile-dark-english.png", "login-mobile-dark-es.png"],
+      "expected": "Selecting each language changes login copy, not only picker label",
+      "actual": "Portuguese, English, and Spanish selections each changed the headline/body/action copy and picker label."
+    },
+    {
+      "component": "theme logo assets",
+      "status": "pass",
+      "evidence": ["login-desktop-light-default.png", "login-desktop-dark-default.png", "login-mobile-light-default.png", "login-mobile-dark-default.png"],
+      "expected": "Light theme logo uses light asset; dark theme logo uses dark asset",
+      "actual": "Light theme rendered cosmolytics-logo-light.webp and dark theme rendered cosmolytics-logo-dark.webp."
+    },
+    {
+      "component": "runtime issue badge",
+      "status": "evidence_note",
+      "evidence": ["login-desktop-light-default.png", "login-mobile-dark-default.png"],
+      "expected": "Product visual QA should assess login UI only",
+      "actual": "Local runtime issue badge is visible in captures. Treated as local runtime overlay evidence, not a product login delta."
+    }
+  ],
+  "gaps": [
+    {
+      "id": "QA3-3383-P2-001",
+      "severity": "P2",
+      "component_family": "runtime overlay hygiene",
+      "expected": "Sanitized captures should show only the app UI where feasible.",
+      "actual": "A local issue badge is visible in the lower corner of runtime screenshots.",
+      "evidence_refs": ["login-desktop-light-default.png", "login-mobile-dark-default.png"],
+      "owner_suggestion": "frontend-runtime",
+      "acceptance_criteria": "Disable or hide local issue overlay for visual QA capture runs, or document it as accepted non-product overlay evidence."
+    },
+    {
+      "id": "QA3-3383-P2-002",
+      "severity": "P2",
+      "component_family": "login copy tone",
+      "expected": "Localized login copy should match final Cosmo product tone if PO requires customer-facing wording.",
+      "actual": "All three language selections localize correctly, but copy remains admin/security themed.",
+      "evidence_refs": ["login-desktop-light-ptbr.png", "login-desktop-light-english.png", "login-desktop-light-es.png"],
+      "owner_suggestion": "product-content",
+      "acceptance_criteria": "Confirm the admin/security tone is final, or provide approved Cosmo login copy for all three supported languages."
+    }
+  ],
+  "validation": {
+    "json_parse": "pass",
+    "jsonl_parse": "pass",
+    "diff_check": "pass",
+    "sensitive_scan": "pass"
+  }
+}
