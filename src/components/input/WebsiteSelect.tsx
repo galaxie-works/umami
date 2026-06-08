@@ -15,6 +15,7 @@ export function WebsiteSelect({
   onChange,
   includeTeams,
   isCollapsed,
+  showDomain,
   buttonProps,
   listProps,
   ...props
@@ -23,6 +24,7 @@ export function WebsiteSelect({
   teamId?: string;
   includeTeams?: boolean;
   isCollapsed?: boolean;
+  showDomain?: boolean;
 } & SelectProps) {
   const { t, labels, messages } = useMessages();
   const { data: website } = useWebsiteQuery(websiteId);
@@ -33,7 +35,7 @@ export function WebsiteSelect({
     { userId: user?.id, teamId },
     { search, pageSize: 20, includeTeams },
   );
-  const listItems: { id: string; name: string }[] = data?.data || [];
+  const listItems: { id: string; name: string; domain?: string }[] = data?.data || [];
 
   useEffect(() => {
     setName(website?.name);
@@ -64,9 +66,22 @@ export function WebsiteSelect({
         <Icon>
           <Globe />
         </Icon>
-        <Text truncate color={name ? undefined : 'muted'}>
-          {value}
-        </Text>
+        {showDomain ? (
+          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, lineHeight: 1.25 }}>
+            <Text truncate color={name ? undefined : 'muted'} weight="bold">
+              {value}
+            </Text>
+            {website?.domain && (
+              <Text truncate color="muted" size="sm">
+                {website.domain}
+              </Text>
+            )}
+          </div>
+        ) : (
+          <Text truncate color={name ? undefined : 'muted'}>
+            {value}
+          </Text>
+        )}
       </Row>
     );
   };
@@ -102,9 +117,20 @@ export function WebsiteSelect({
         },
       }}
     >
-      {listItems.map(({ id, name }) => (
+      {listItems.map(({ id, name, domain }) => (
         <ListItem key={id} id={id}>
-          {name}
+          {showDomain ? (
+            <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              <Text truncate>{name}</Text>
+              {domain && (
+                <Text truncate color="muted" size="sm">
+                  {domain}
+                </Text>
+              )}
+            </div>
+          ) : (
+            name
+          )}
         </ListItem>
       ))}
     </Select>

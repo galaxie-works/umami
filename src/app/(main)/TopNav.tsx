@@ -1,88 +1,89 @@
 'use client';
-import { Icon, Row } from '@umami/react-zen';
-import { useNavigation } from '@/components/hooks';
-import { Slash } from '@/components/icons';
-import { BoardSelect } from '@/components/input/BoardSelect';
-import { LinkSelect } from '@/components/input/LinkSelect';
-import { PixelSelect } from '@/components/input/PixelSelect';
-import { WebsiteSelect } from '@/components/input/WebsiteSelect';
+import { useGlobalState, useMessages, useNavigation, useWebsiteNavItems } from '@/components/hooks';
+import { PanelLeft } from '@/components/icons';
 import styles from './Shell.module.css';
 
 export function TopNav() {
-  const { websiteId, linkId, pixelId, boardId, teamId, router, renderUrl } = useNavigation();
-  const hasEntityContext = websiteId || linkId || pixelId || boardId;
-
-  const handleWebsiteChange = (value: string) => {
-    router.push(renderUrl(`/websites/${value}`, false));
-  };
-
-  const handleLinkChange = (value: string) => {
-    router.push(renderUrl(`/links/${value}`, false));
-  };
-
-  const handlePixelChange = (value: string) => {
-    router.push(renderUrl(`/pixels/${value}`, false));
-  };
-
-  const handleBoardChange = (value: string) => {
-    router.push(renderUrl(`/boards/${value}`, false));
-  };
-
-  if (!hasEntityContext) {
-    return null;
-  }
+  const { t, labels } = useMessages();
+  const { pathname, websiteId, linkId, pixelId, boardId } = useNavigation();
+  const [isCollapsed, setIsCollapsed] = useGlobalState('sidenav-collapsed', false);
+  const { items, selectedKey } = useWebsiteNavItems(websiteId || '');
+  const websiteItem = items.flatMap(({ items }) => items).find(({ id }) => id === selectedKey);
+  const title = getTitle({
+    pathname,
+    websiteLabel: websiteItem?.label,
+    linkLabel: linkId ? t(labels.links) : undefined,
+    pixelLabel: pixelId ? t(labels.pixels) : undefined,
+    boardLabel: boardId ? t(labels.boards) : undefined,
+    dashboardLabel: t(labels.dashboard),
+    websitesLabel: t(labels.websites),
+    settingsLabel: t(labels.settings),
+    adminLabel: t(labels.admin),
+  });
 
   return (
-    <div className={styles.contextBar}>
-      <Row alignItems="center">
-        <Icon size="sm" color="muted" style={{ opacity: 0.7, marginRight: 8 }}>
-          <Slash />
-        </Icon>
-        {websiteId && (
-          <WebsiteSelect
-            websiteId={websiteId}
-            teamId={teamId}
-            onChange={handleWebsiteChange}
-            buttonProps={{
-              variant: 'quiet',
-              style: { minHeight: 40, minWidth: 220, maxWidth: 260 },
-            }}
-          />
-        )}
-        {linkId && (
-          <LinkSelect
-            linkId={linkId}
-            teamId={teamId}
-            onChange={handleLinkChange}
-            buttonProps={{
-              variant: 'quiet',
-              style: { minHeight: 40, minWidth: 220, maxWidth: 260 },
-            }}
-          />
-        )}
-        {pixelId && (
-          <PixelSelect
-            pixelId={pixelId}
-            teamId={teamId}
-            onChange={handlePixelChange}
-            buttonProps={{
-              variant: 'quiet',
-              style: { minHeight: 40, minWidth: 220, maxWidth: 260 },
-            }}
-          />
-        )}
-        {boardId && (
-          <BoardSelect
-            boardId={boardId}
-            teamId={teamId}
-            onChange={handleBoardChange}
-            buttonProps={{
-              variant: 'quiet',
-              style: { minHeight: 40, minWidth: 220, maxWidth: 260 },
-            }}
-          />
-        )}
-      </Row>
+    <div className={styles.topBar}>
+      <button
+        aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        className={styles.collapseButton}
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        type="button"
+      >
+        <PanelLeft />
+      </button>
+      <div className={styles.topTitle}>{title}</div>
     </div>
   );
+}
+
+function getTitle({
+  pathname,
+  websiteLabel,
+  linkLabel,
+  pixelLabel,
+  boardLabel,
+  dashboardLabel,
+  websitesLabel,
+  settingsLabel,
+  adminLabel,
+}: {
+  pathname: string;
+  websiteLabel?: string;
+  linkLabel?: string;
+  pixelLabel?: string;
+  boardLabel?: string;
+  dashboardLabel: string;
+  websitesLabel: string;
+  settingsLabel: string;
+  adminLabel: string;
+}) {
+  if (websiteLabel) {
+    return websiteLabel;
+  }
+
+  if (linkLabel) {
+    return linkLabel;
+  }
+
+  if (pixelLabel) {
+    return pixelLabel;
+  }
+
+  if (boardLabel) {
+    return boardLabel;
+  }
+
+  if (pathname.includes('/admin')) {
+    return adminLabel;
+  }
+
+  if (pathname.includes('/settings')) {
+    return settingsLabel;
+  }
+
+  if (pathname.includes('/websites')) {
+    return websitesLabel;
+  }
+
+  return dashboardLabel;
 }

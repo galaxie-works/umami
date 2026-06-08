@@ -1,11 +1,13 @@
 .shell {
   display: grid;
-  grid-template-columns: 272px minmax(0, 1fr);
+  grid-template-columns: 256px minmax(0, 1fr);
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, color-mix(in oklch, var(--primary) 4%, transparent), transparent 280px),
-    var(--surface-raised);
+  background: var(--surface-raised);
   color: var(--text-primary);
+}
+
+.shellCollapsed {
+  grid-template-columns: 72px minmax(0, 1fr);
 }
 
 .mobileBar {
@@ -22,20 +24,30 @@
   flex-direction: column;
   min-width: 0;
   min-height: 100vh;
-  border-left: 1px solid var(--border-muted);
-  background: color-mix(in oklch, var(--surface-raised) 88%, white 12%);
+  background: var(--surface-raised);
 }
 
-.contextBar {
+.topBar {
   position: sticky;
   top: 0;
   z-index: 30;
   display: flex;
   align-items: center;
-  min-height: 56px;
+  gap: 14px;
+  min-height: 52px;
   border-bottom: 1px solid var(--border-muted);
-  background: color-mix(in oklch, var(--surface-raised) 92%, white 8%);
-  padding: 8px 28px;
+  background: color-mix(in oklch, var(--surface-raised) 94%, white 6%);
+  padding: 0 24px 0 16px;
+}
+
+.topTitle {
+  min-width: 0;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .content {
@@ -51,45 +63,24 @@
   top: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  width: 272px;
+  gap: 12px;
+  width: 256px;
   height: 100vh;
   border-right: 1px solid var(--border-muted);
-  background: var(--surface-overlay);
-  padding: 14px 12px;
+  background: color-mix(in oklch, var(--surface-raised) 92%, white 8%);
+  padding: 16px 12px 8px;
 }
 
 .sideNavCollapsed {
-  width: 76px;
+  width: 72px;
 }
 
-.brandRow,
 .contextArea,
+.teamContext,
 .bottomArea {
   border: 1px solid var(--border-muted);
   border-radius: 8px;
-  background: var(--surface-raised);
-}
-
-.brandRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 48px;
-  padding: 0 10px;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  color: var(--text-primary);
-  font-weight: 800;
-}
-
-.brand svg {
-  flex: 0 0 auto;
+  background: var(--surface-overlay);
 }
 
 .collapseButton {
@@ -111,10 +102,47 @@
 }
 
 .contextArea {
-  padding: 6px;
+  padding: 8px;
 }
 
 .contextArea button {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.brandContext {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 4px;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.brandText strong,
+.brandText span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brandText span {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.teamContext {
+  padding: 4px;
+}
+
+.teamContext button {
   justify-content: space-between;
   width: 100%;
 }
@@ -131,32 +159,33 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding: 2px 0;
+  padding: 4px 0 8px;
 }
 
 .navGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
+  margin-bottom: 18px;
 }
 
 .navLabel {
-  padding: 8px 10px 2px;
+  padding: 6px 4px 8px;
   color: var(--text-secondary);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 38px;
-  border-radius: 8px;
+  gap: 9px;
+  min-height: 34px;
+  border-radius: 6px;
   color: var(--text-secondary);
-  font-weight: 600;
-  padding: 0 10px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 8px;
 }
 
 .navLink:hover {
@@ -166,8 +195,9 @@
 }
 
 .navLinkActive {
-  background: color-mix(in oklch, var(--primary) 12%, var(--surface-sunken));
+  background: color-mix(in oklch, var(--surface-sunken) 82%, var(--primary) 8%);
   color: var(--text-primary);
+  font-weight: 700;
 }
 
 .navIcon {
@@ -199,6 +229,11 @@
   gap: 8px;
 }
 
+.websiteNav {
+  display: flex;
+  flex-direction: column;
+}
+
 @media (max-width: 1023px) {
   .shell {
     grid-template-columns: 1fr;
@@ -223,7 +258,7 @@
     border-left: 0;
   }
 
-  .contextBar {
+  .topBar {
     padding: 8px 12px;
   }
 

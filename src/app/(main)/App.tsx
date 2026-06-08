@@ -5,7 +5,13 @@ import { useEffect } from 'react';
 import { MobileNav } from '@/app/(main)/MobileNav';
 import { SideNav } from '@/app/(main)/SideNav';
 import { TopNav } from '@/app/(main)/TopNav';
-import { useConfig, useLoginQuery, useNavigation, useTeamQuery } from '@/components/hooks';
+import {
+  useConfig,
+  useGlobalState,
+  useLoginQuery,
+  useNavigation,
+  useTeamQuery,
+} from '@/components/hooks';
 import { LAST_TEAM_CONFIG } from '@/lib/constants';
 import { removeItem, setItem } from '@/lib/storage';
 import styles from './Shell.module.css';
@@ -16,6 +22,7 @@ export function App({ children }) {
   const config = useConfig();
   const { pathname, router, teamId } = useNavigation();
   const { isLoading: isTeamLoading, error: teamError } = useTeamQuery(teamId);
+  const [isCollapsed] = useGlobalState('sidenav-collapsed', false);
 
   useEffect(() => {
     if (teamId) {
@@ -52,7 +59,7 @@ export function App({ children }) {
   }
 
   return (
-    <div className={styles.shell}>
+    <div className={classNames(styles.shell, isCollapsed && styles.shellCollapsed)}>
       <div className={styles.mobileBar}>
         <MobileNav />
       </div>
@@ -86,4 +93,8 @@ export function App({ children }) {
       )}
     </div>
   );
+}
+
+function classNames(...names: Array<string | false | undefined>) {
+  return names.filter(Boolean).join(' ');
 }
