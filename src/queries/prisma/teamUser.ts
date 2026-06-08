@@ -36,13 +36,19 @@ export async function getTeamUsers(criteria: TeamUserFindManyArgs, filters?: Que
   );
 }
 
-export async function createTeamUser(userId: string, teamId: string, role: string) {
+export async function createTeamUser(
+  userId: string,
+  teamId: string,
+  role: string,
+  websiteIds?: string[] | null,
+) {
   return prisma.client.teamUser.create({
     data: {
       id: uuid(),
       userId,
       teamId,
       role,
+      websiteIds: websiteIds?.length ? websiteIds : undefined,
     },
   });
 }

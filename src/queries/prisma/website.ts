@@ -91,11 +91,16 @@ export async function getUserWebsites(userId: string, filters?: QueryFilters) {
   );
 }
 
-export async function getTeamWebsites(teamId: string, filters?: QueryFilters) {
+export async function getTeamWebsites(
+  teamId: string,
+  filters?: QueryFilters,
+  scopedWebsiteIds?: string[] | null,
+) {
   return getWebsites(
     {
       where: {
         teamId,
+        ...(scopedWebsiteIds?.length ? { id: { in: scopedWebsiteIds } } : {}),
       },
       include: {
         createUser: {
@@ -108,6 +113,24 @@ export async function getTeamWebsites(teamId: string, filters?: QueryFilters) {
     },
     filters,
   );
+}
+
+export async function getTeamWebsiteIds(teamId: string) {
+  const websites = await prisma.client.website.findMany({
+    where: {
+      teamId,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return websites.map(website => website.id);
+}
+
+export function getScopedWebsiteIds(value: unknown): string[] | null {
+  return Array.isArray(value) && value.every(item => typeof item === 'string') ? value : null;
 }
 
 export async function createWebsite(

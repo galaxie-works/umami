@@ -40,6 +40,7 @@ model UserInvitation {
   role           String    @db.VarChar(50)
   teamId         String?   @map("team_id") @db.Uuid
   teamRole       String?   @map("team_role") @db.VarChar(50)
+  websiteIds     Json?     @map("website_ids")
   tokenHash      String    @unique @map("token_hash") @db.VarChar(128)
   invitedById    String    @map("invited_by") @db.Uuid
   acceptedUserId String?   @map("accepted_user_id") @db.Uuid
@@ -266,6 +267,7 @@ model TeamUser {
   teamId    String    @map("team_id") @db.Uuid
   userId    String    @map("user_id") @db.Uuid
   role      String    @db.VarChar(50)
+  websiteIds Json?    @map("website_ids")
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
 

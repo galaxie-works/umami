@@ -51,7 +51,12 @@ export async function POST(request: Request) {
   }
 
   if (invitation.teamId && !(await getTeamUser(invitation.teamId, user.id))) {
-    await createTeamUser(user.id, invitation.teamId, invitation.teamRole || ROLES.teamMember);
+    await createTeamUser(
+      user.id,
+      invitation.teamId,
+      invitation.teamRole || ROLES.teamMember,
+      getInvitationWebsiteIds(invitation.websiteIds),
+    );
   }
 
   const accepted = await acceptInvitation(invitation.id, user.id);
@@ -61,4 +66,8 @@ export async function POST(request: Request) {
   }
 
   return json(await createLoginSession(user));
+}
+
+function getInvitationWebsiteIds(value: unknown) {
+  return Array.isArray(value) && value.every(item => typeof item === 'string') ? value : null;
 }

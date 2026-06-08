@@ -3,7 +3,7 @@ import { getQueryFilters, parseRequest } from '@/lib/request';
 import { json, unauthorized } from '@/lib/response';
 import { pagingParams, searchParams } from '@/lib/schema';
 import { canViewTeam } from '@/permissions';
-import { getTeamWebsites } from '@/queries/prisma';
+import { getScopedWebsiteIds, getTeamUser, getTeamWebsites } from '@/queries/prisma';
 
 export async function GET(request: Request, { params }: { params: Promise<{ teamId: string }> }) {
   const schema = z.object({
@@ -22,8 +22,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ team
   }
 
   const filters = await getQueryFilters(query);
+  const teamUser = auth.user.isAdmin ? null : await getTeamUser(teamId, auth.user.id);
+  const scopedWebsiteIds = getScopedWebsiteIds(teamUser?.websiteIds);
 
-  const websites = await getTeamWebsites(teamId, filters);
+  const websites = await getTeamWebsites(teamId, filters, scopedWebsiteIds);
 
   return json(websites);
 }

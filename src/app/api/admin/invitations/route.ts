@@ -11,7 +11,13 @@ import { getQueryFilters, parseRequest } from '@/lib/request';
 import { badRequest, json, unauthorized } from '@/lib/response';
 import { pagingParams, searchParams, teamRoleParam, userRoleParam } from '@/lib/schema';
 import { canCreateUser, canUpdateTeam, canViewUsers } from '@/permissions';
-import { createInvitation, getInvitations, getTeamUser, getUserByUsername } from '@/queries/prisma';
+import {
+  createInvitation,
+  getInvitations,
+  getTeamUser,
+  getTeamWebsiteIds,
+  getUserByUsername,
+} from '@/queries/prisma';
 import { ROLES } from '@/lib/constants';
 
 const invitationTtlDays = 7;
@@ -53,6 +59,7 @@ export async function POST(request: Request) {
     role: userRoleParam.default(ROLES.user),
     teamId: z.uuid().optional(),
     teamRole: teamRoleParam.optional(),
+    websiteIds: z.array(z.uuid()).optional(),
   });
 
   const { auth, body, error } = await parseRequest(request, schema);
@@ -80,6 +87,16 @@ export async function POST(request: Request) {
     return badRequest({ message: 'User is already a member of this team.' });
   }
 
+  if (!body.teamId && body.websiteIds?.length) {
+    return badRequest({ message: 'Website access can only be scoped to a team invitation.' });
+  }
+
+  const websiteIds = body.teamId ? await normalizeTeamWebsiteIds(body.teamId, body.websiteIds) : null;
+
+  if (body.teamId && body.websiteIds?.length && websiteIds.length !== body.websiteIds.length) {
+    return badRequest({ message: 'One or more websites do not belong to this team.' });
+  }
+
   const deliveryToken = createOpaqueToken();
   const expiresAt = new Date(Date.now() + invitationTtlDays * 24 * 60 * 60 * 1000);
   const delivery = await sendInvitationEmail(email, deliveryToken);
@@ -90,6 +107,7 @@ export async function POST(request: Request) {
     role: globalRole,
     teamId: body.teamId,
     teamRole: body.teamId ? body.teamRole || ROLES.teamMember : null,
+    websiteIds,
     invitedById: auth.user.id,
     tokenHash: hashAuthToken(deliveryToken),
     expiresAt,
@@ -135,6 +153,7 @@ function toInvitationView(invitation: any) {
     role: invitation.role,
     teamId: invitation.teamId,
     teamRole: invitation.teamRole,
+    websiteIds: invitation.websiteIds,
     status,
     sentAt: invitation.sentAt,
     expiresAt: invitation.expiresAt,
@@ -147,4 +166,14 @@ function toInvitationView(invitation: any) {
     canResend: !invitation.acceptedAt,
     canRevoke: !invitation.acceptedAt && !invitation.revokedAt,
   };
+}
+
+async function normalizeTeamWebsiteIds(teamId: string, websiteIds?: string[]) {
+  if (!websiteIds?.length) {
+    return null;
+  }
+
+  const allowedIds = new Set(await getTeamWebsiteIds(teamId));
+
+  return [...new Set(websiteIds)].filter(websiteId => allowedIds.has(websiteId));
 }

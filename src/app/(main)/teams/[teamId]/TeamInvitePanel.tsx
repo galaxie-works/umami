@@ -24,6 +24,13 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
   const { t, labels } = useMessages();
   const [email, setEmail] = useState('');
   const [teamRole, setTeamRole] = useState<string>(ROLES.teamMember);
+  const [websiteScope, setWebsiteScope] = useState('all');
+  const [selectedWebsiteIds, setSelectedWebsiteIds] = useState<string[]>([]);
+
+  const websitesQuery = useQuery({
+    queryKey: ['team:invite-websites', teamId],
+    queryFn: () => get(`/teams/${teamId}/websites`, { pageSize: 100 }),
+  });
 
   const invitationsQuery = useQuery({
     queryKey: ['team:invitations', teamId],
@@ -34,6 +41,8 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
     mutationFn: (data: Record<string, any>) => post('/admin/invitations', data),
     onSuccess: () => {
       setEmail('');
+      setWebsiteScope('all');
+      setSelectedWebsiteIds([]);
       toast('Team invitation queued.');
       touch('team:users');
       invitationsQuery.refetch();
@@ -69,8 +78,11 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
       role: ROLES.user,
       teamId,
       teamRole,
+      websiteIds: websiteScope === 'selected' ? selectedWebsiteIds : undefined,
     });
   };
+
+  const websites = websitesQuery.data?.data || [];
 
   return (
     <SettingsCard
@@ -78,37 +90,91 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
       description="New people join this team directly. Existing users receive the same team membership when they accept."
       action={<SettingsBadge tone="success">Team scoped</SettingsBadge>}
     >
-      <form className={settingsKitStyles.grid} onSubmit={handleSubmit}>
-        <SettingsField label="Email">
-          <SettingsInput
-            autoComplete="email"
-            onChange={event => setEmail(event.currentTarget.value)}
-            placeholder="teammate@company.com"
-            required
-            type="email"
-            value={email}
-          />
-        </SettingsField>
-        <SettingsField label={t(labels.role)}>
-          <SettingsSelect
-            onChange={event => setTeamRole(event.currentTarget.value)}
-            value={teamRole}
+      <form className={settingsKitStyles.inviteForm} onSubmit={handleSubmit}>
+        <div className={settingsKitStyles.grid}>
+          <SettingsField label="Email">
+            <SettingsInput
+              autoComplete="email"
+              onChange={event => setEmail(event.currentTarget.value)}
+              placeholder="teammate@company.com"
+              required
+              type="email"
+              value={email}
+            />
+          </SettingsField>
+          <SettingsField label={t(labels.role)}>
+            <SettingsSelect
+              onChange={event => setTeamRole(event.currentTarget.value)}
+              value={teamRole}
+            >
+              {teamRoleOptions.map(role => (
+                <option key={role} value={role}>
+                  {getTeamRoleLabel(role)}
+                </option>
+              ))}
+            </SettingsSelect>
+          </SettingsField>
+        </div>
+
+        <div className={settingsKitStyles.accessScope}>
+          <SettingsField label="Website access">
+            <SettingsSelect
+              onChange={event => {
+                setWebsiteScope(event.currentTarget.value);
+                if (event.currentTarget.value === 'all') {
+                  setSelectedWebsiteIds([]);
+                }
+              }}
+              value={websiteScope}
+            >
+              <option value="all">All team websites</option>
+              <option value="selected">Selected websites</option>
+            </SettingsSelect>
+          </SettingsField>
+
+          {websiteScope === 'selected' && (
+            <div className={settingsKitStyles.checkboxList}>
+              {websites.length === 0 ? (
+                <div className={settingsKitStyles.emptyState}>
+                  <MailCheck />
+                  <span>No websites in this team yet.</span>
+                </div>
+              ) : (
+                websites.map((website: any) => (
+                  <label className={settingsKitStyles.checkboxRow} key={website.id}>
+                    <input
+                      checked={selectedWebsiteIds.includes(website.id)}
+                      onChange={event => {
+                        setSelectedWebsiteIds(current =>
+                          event.currentTarget.checked
+                            ? [...current, website.id]
+                            : current.filter(id => id !== website.id),
+                        );
+                      }}
+                      type="checkbox"
+                    />
+                    <span>{website.name}</span>
+                    <small>{website.domain}</small>
+                  </label>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className={settingsKitStyles.actions}>
+          <SettingsButton
+            disabled={
+              createInvitation.isPending ||
+              (websiteScope === 'selected' && selectedWebsiteIds.length === 0)
+            }
+            type="submit"
+            variant="primary"
           >
-            {teamRoleOptions.map(role => (
-              <option key={role} value={role}>
-                {getTeamRoleLabel(role)}
-              </option>
-            ))}
-          </SettingsSelect>
-        </SettingsField>
-        <SettingsButton
-          disabled={createInvitation.isPending}
-          type="submit"
-          variant="primary"
-        >
-          <Send />
-          Invite
-        </SettingsButton>
+            <Send />
+            Invite
+          </SettingsButton>
+        </div>
       </form>
 
       <div className={settingsKitStyles.listHeader}>
@@ -130,6 +196,9 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
                 <span className={settingsKitStyles.meta}>
                   {getTeamRoleLabel(invite.teamRole)} / {invite.status} / expires{' '}
                   {formatDate(invite.expiresAt)}
+                </span>
+                <span className={settingsKitStyles.meta}>
+                  {formatWebsiteAccess(invite.websiteIds, websites)}
                 </span>
               </div>
               <div className={settingsKitStyles.actions}>
@@ -163,6 +232,18 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
       </div>
     </SettingsCard>
   );
+}
+
+function formatWebsiteAccess(websiteIds: unknown, websites: any[]) {
+  if (!Array.isArray(websiteIds) || websiteIds.length === 0) {
+    return 'All team websites';
+  }
+
+  const names = websiteIds
+    .map(websiteId => websites.find((website: any) => website.id === websiteId)?.name)
+    .filter(Boolean);
+
+  return names.length ? `Websites: ${names.join(', ')}` : `${websiteIds.length} selected websites`;
 }
 
 function getTeamRoleLabel(role: string) {

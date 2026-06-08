@@ -30,6 +30,13 @@ export function TeamMembersTable({
       <DataColumn id="role" label={t(labels.role)}>
         {(row: any) => roles[row?.role]}
       </DataColumn>
+      <DataColumn id="websiteAccess" label="Website access">
+        {(row: any) =>
+          Array.isArray(row?.websiteIds) && row.websiteIds.length > 0
+            ? `${row.websiteIds.length} selected`
+            : 'All websites'
+        }
+      </DataColumn>
       {allowEdit && (
         <DataColumn id="action" align="end">
           {(row: any) => {
