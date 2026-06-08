@@ -20,6 +20,7 @@ export async function GET(request: Request) {
   const schema = z.object({
     ...pagingParams,
     ...searchParams,
+    teamId: z.uuid().optional(),
   });
 
   const { auth, query, error } = await parseRequest(request, schema);
@@ -28,12 +29,16 @@ export async function GET(request: Request) {
     return error();
   }
 
-  if (!(await canViewUsers(auth))) {
+  if (query.teamId) {
+    if (!(await canUpdateTeam(auth, query.teamId))) {
+      return unauthorized({ message: 'You must be the owner/manager of this team.' });
+    }
+  } else if (!(await canViewUsers(auth))) {
     return unauthorized();
   }
 
   const filters = await getQueryFilters(query);
-  const invitations = await getInvitations(filters);
+  const invitations = await getInvitations({ ...filters, teamId: query.teamId });
 
   return json({
     ...invitations,

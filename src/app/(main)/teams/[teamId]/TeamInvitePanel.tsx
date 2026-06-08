@@ -27,7 +27,7 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
 
   const invitationsQuery = useQuery({
     queryKey: ['team:invitations', teamId],
-    queryFn: () => get('/admin/invitations', { pageSize: 50 }),
+    queryFn: () => get('/admin/invitations', { pageSize: 50, teamId }),
   });
 
   const createInvitation = useMutation({
@@ -58,9 +58,7 @@ export function TeamInvitePanel({ teamId }: { teamId: string }) {
 
   const pendingInvitations = useMemo(
     () =>
-      (invitationsQuery.data?.data || []).filter(
-        (invite: any) => invite.teamId === teamId && invite.status !== 'accepted',
-      ),
+      (invitationsQuery.data?.data || []).filter((invite: any) => invite.status !== 'accepted'),
     [invitationsQuery.data?.data, teamId],
   );
 

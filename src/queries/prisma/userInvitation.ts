@@ -4,9 +4,10 @@ import type { QueryFilters } from '@/lib/types';
 const client = prisma.client as any;
 
 export function getInvitations(filters: QueryFilters = {}) {
-  const { search } = filters;
+  const { search, teamId } = filters as QueryFilters & { teamId?: string };
 
   const where: Record<string, any> = {
+    ...(teamId ? { teamId } : {}),
     ...prisma.getSearchParameters(search, [{ email: 'contains' }]),
   };
 
