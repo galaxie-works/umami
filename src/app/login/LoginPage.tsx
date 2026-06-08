@@ -5,6 +5,7 @@ import { ChevronDown, Languages, Moon, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useLocale, useLoginQuery } from '@/components/hooks';
+import { Button } from '@/components/ui/button';
 import styles from './CosmolyticsAuth.module.css';
 import { LoginForm } from './LoginForm';
 
@@ -38,22 +39,23 @@ export function LoginPage() {
         <LoginForm />
         <div className={styles.authControls} aria-label="Login preferences">
           <div className={styles.languageWrapper}>
-            <button
+            <Button
               aria-expanded={isLanguageOpen}
               aria-haspopup="listbox"
               aria-label="Language"
               className={styles.languageControl}
               onClick={() => setIsLanguageOpen(value => !value)}
               type="button"
+              variant="outline"
             >
               <Languages size={16} aria-hidden="true" />
               <span>{activeLanguage.label}</span>
               <ChevronDown size={14} aria-hidden="true" />
-            </button>
+            </Button>
             {isLanguageOpen && (
               <div className={styles.languageMenu} role="listbox" aria-label="Language">
                 {loginLanguages.map(({ value, label }) => (
-                  <button
+                  <Button
                     aria-selected={value === locale}
                     className={
                       value === locale ? styles.languageOptionActive : styles.languageOption
@@ -65,21 +67,23 @@ export function LoginPage() {
                     }}
                     role="option"
                     type="button"
+                    variant="ghost"
                   >
                     {label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
           </div>
-          <button
+          <Button
             aria-label={theme === 'dark' ? 'Use light theme' : 'Use dark theme'}
             className={styles.themeToggle}
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             type="button"
+            variant="ghost"
           >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
+          </Button>
         </div>
       </section>
     </main>

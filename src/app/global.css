@@ -1,7 +1,48 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
 :root {
   --font-family: var(--font-inter), sans-serif;
+  --background: 0 0% 98%;
+  --foreground: 0 0% 4%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 4%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 4%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 42%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 86%;
+  --input: 0 0% 86%;
+  --ring: 246 100% 69%;
+  --radius: 0.5rem;
   --primary: oklch(62.3% 0.214 259.815);
   --primary-foreground: oklch(98.5% 0 0);
+}
+
+[data-theme="dark"] {
+  --background: 0 0% 13%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 7%;
+  --popover-foreground: 0 0% 98%;
+  --secondary: 0 0% 16%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 16%;
+  --muted-foreground: 0 0% 70%;
+  --accent: 0 0% 16%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62% 31%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 24%;
+  --input: 0 0% 24%;
+  --ring: 246 100% 75%;
 }
 
 html,

@@ -5,6 +5,9 @@ import { KeyRound, Mail } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type FormEvent, useState } from 'react';
 import { useApi, useLocale } from '@/components/hooks';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { setClientAuthToken } from '@/lib/client';
 import { setUser } from '@/store/app';
 import styles from './CosmolyticsAuth.module.css';
@@ -54,7 +57,7 @@ export function LoginForm() {
   const isPending = passwordLogin.isPending || magicLink.isPending;
 
   return (
-    <div className={styles.card}>
+    <Card className={styles.card}>
       <div className={styles.brand}>
         <img
           alt="Cosmolytics"
@@ -74,7 +77,7 @@ export function LoginForm() {
           <span className={styles.label}>
             {mode === 'magic' ? copy.email : copy.emailOrUsername}
           </span>
-          <input
+          <Input
             autoComplete="username"
             className={styles.input}
             data-test="input-username"
@@ -87,7 +90,7 @@ export function LoginForm() {
         {mode === 'password' && (
           <label className={styles.field}>
             <span className={styles.label}>{copy.password}</span>
-            <input
+            <Input
               autoComplete="current-password"
               className={styles.input}
               data-test="input-password"
@@ -102,23 +105,24 @@ export function LoginForm() {
         {notice && <div className={styles.message}>{notice}</div>}
         {error && <div className={`${styles.message} ${styles.error}`}>{error.message}</div>}
 
-        <button className={styles.button} data-test="button-submit" disabled={isPending}>
+        <Button className={styles.button} data-test="button-submit" disabled={isPending}>
           {mode === 'password' ? <KeyRound /> : <Mail />}
           {mode === 'password' ? copy.logIn : copy.getMagicLink}
-        </button>
+        </Button>
 
-        <button
+        <Button
           className={styles.fallbackButton}
           onClick={() => {
             setNotice('');
             setMode(mode === 'magic' ? 'password' : 'magic');
           }}
           type="button"
+          variant="ghost"
         >
           {mode === 'magic' ? copy.usePassword : copy.useMagicLink}
-        </button>
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 }
 
