@@ -219,4 +219,3 @@ Suggested next source/static packages:
 - `umami_shell_sidebar_route_permission_guard`: route/permission preservation validator.
 - `umami_admin_settings_invite_scope_guard`: admin/invite lifecycle and role/team-scope validator.
 - `umami_workspace_lists_table_contract_guard`: list/table query preservation validator.
-
