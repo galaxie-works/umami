@@ -1,0 +1,157 @@
+{
+  "artifact": "qa3-localhost3340-cosmo-visual",
+  "date": "2026-06-08",
+  "agent": "Codex QA3",
+  "repo": "landing-ics/umami",
+  "branch": "feature/cosmolytics-shadcn-invite-magic-login",
+  "head": "860edf75",
+  "target": "localhost:3340",
+  "classification": "completed_with_findings / cosmo_shadcn_visual_qa / no_deploy_no_mutation",
+  "scope": [
+    "login",
+    "websites list",
+    "website overview"
+  ],
+  "reference_policy": {
+    "visual_reference": "Cosmo legacy/shadcn reference supplied by PO via source-thread attachments and prior local smoke artifact",
+    "reference_handling": "Reference screenshots that include browser chrome are used as source labels only and are not copied into this artifact set.",
+    "expected_visual_direction": "shadcn/Cosmo visual, not old Umami visual: centered login card, Cosmo sidebar/shell, shadcn tokens for cards, tables, forms and buttons."
+  },
+  "capture_policy": {
+    "method": "Playwright screenshots of local app viewport",
+    "browser_chrome_in_artifacts": false,
+    "ui_only": true,
+    "sanitization": "No full URLs, raw route IDs, cookies, tokens, credentials or payload rows recorded in text artifacts.",
+    "mutation": "No implementation, deploy, restart, DB change, Umami production mutation or data mutation. Local login created only an ephemeral browser session for visual capture."
+  },
+  "screenshots": [
+    {
+      "id": "QA3-3340-LOGIN-D",
+      "file": "localhost3340-login-desktop.png",
+      "route": "/login",
+      "viewport": "desktop 1440x1000",
+      "coverage": "Login card, language selector and theme control",
+      "used": true
+    },
+    {
+      "id": "QA3-3340-LOGIN-M",
+      "file": "localhost3340-login-mobile.png",
+      "route": "/login",
+      "viewport": "mobile 390x844",
+      "coverage": "Mobile login card",
+      "used": true
+    },
+    {
+      "id": "QA3-3340-WEBSITES-D",
+      "file": "localhost3340-websites-desktop-auth.png",
+      "route": "/websites",
+      "viewport": "desktop 1440x1000",
+      "coverage": "Authenticated websites list with Cosmo shell, sidebar, search, table and Add website button",
+      "used": true
+    },
+    {
+      "id": "QA3-3340-WEBSITES-M",
+      "file": "localhost3340-websites-mobile-auth.png",
+      "route": "/websites",
+      "viewport": "mobile 390x844",
+      "coverage": "Mobile websites list, top shell and cardified rows",
+      "used": true
+    },
+    {
+      "id": "QA3-3340-OVERVIEW-D",
+      "file": "localhost3340-overview-desktop-auth.png",
+      "route": "website overview",
+      "viewport": "desktop 1440x1000",
+      "coverage": "Authenticated website overview with Cosmo sidebar, metrics, chart, cards, map and heatmap",
+      "used": true
+    },
+    {
+      "id": "QA3-3340-WEBSITES-UNAUTH-D",
+      "file": "localhost3340-websites-desktop.png",
+      "route": "/websites",
+      "viewport": "desktop 1440x1000",
+      "coverage": "Unauthenticated /websites redirect state",
+      "used": false
+    },
+    {
+      "id": "QA3-3340-WEBSITES-UNAUTH-M",
+      "file": "localhost3340-websites-mobile.png",
+      "route": "/websites",
+      "viewport": "mobile 390x844",
+      "coverage": "Unauthenticated /websites redirect state",
+      "used": false
+    }
+  ],
+  "component_family_inventory": [
+    {
+      "family": "auth-login-card",
+      "expected": "Cosmo/shadcn centered login card with Cosmolytics brand, quiet copy, card radius/shadow/border, primary button tokens and clean language/theme controls.",
+      "actual": "Centered shadcn-like card exists, but logo and copy still read as legacy Umami/admin tone. Language/theme controls sit below card instead of forming a polished Cosmo auth footer.",
+      "status": "partial",
+      "evidence": ["QA3-3340-LOGIN-D", "QA3-3340-LOGIN-M"]
+    },
+    {
+      "family": "cosmo-shell-sidebar",
+      "expected": "Cosmo workspace shell with branded sidebar, selected item state, section grouping and bottom user control.",
+      "actual": "Desktop websites and overview show Cosmo shell/sidebar with shadcn selected states and grouped navigation. Mobile shows a compact top bar and content shell.",
+      "status": "mostly_pass",
+      "evidence": ["QA3-3340-WEBSITES-D", "QA3-3340-WEBSITES-M", "QA3-3340-OVERVIEW-D"]
+    },
+    {
+      "family": "page-header-actions",
+      "expected": "shadcn page heading, divider, compact primary actions and consistent action placement.",
+      "actual": "Websites page uses clean heading, divider and primary Add website button. Overview uses compact header/edit action and filter/date controls, but remains closer to Umami overview layout than Cosmo legacy dashboard composition.",
+      "status": "partial",
+      "evidence": ["QA3-3340-WEBSITES-D", "QA3-3340-OVERVIEW-D"]
+    },
+    {
+      "family": "cards-surfaces",
+      "expected": "Cards with shadcn border/radius/background, consistent spacing, no nested-card heaviness, and quiet operational density.",
+      "actual": "Websites list uses a large shadcn card; overview cards and chart panels use shadcn-like borders. Mobile websites rows become separate framed cards and feel heavier than desktop table.",
+      "status": "partial",
+      "evidence": ["QA3-3340-WEBSITES-D", "QA3-3340-WEBSITES-M", "QA3-3340-OVERVIEW-D"]
+    },
+    {
+      "family": "tables-lists",
+      "expected": "shadcn table/list rows with clear row actions, aligned columns, restrained dividers and responsive transformation.",
+      "actual": "Desktop websites table is close: search, columns, row action icons. Mobile transforms rows into cards, but action icon sits on its own row and vertical spacing feels awkward.",
+      "status": "partial",
+      "evidence": ["QA3-3340-WEBSITES-D", "QA3-3340-WEBSITES-M"]
+    },
+    {
+      "family": "forms-controls",
+      "expected": "Inputs, search, language selector, theme control, filter button and date dropdown use consistent shadcn tokens, icon sizing and focus treatment.",
+      "actual": "Search/add/filter/date controls are mostly shadcn. Login form has shadcn input/button base but non-Cosmo copy and separated footer controls.",
+      "status": "partial",
+      "evidence": ["QA3-3340-LOGIN-D", "QA3-3340-WEBSITES-D", "QA3-3340-OVERVIEW-D"]
+    },
+    {
+      "family": "tabs-empty-states",
+      "expected": "Tabs and empty states should match shadcn/Cosmo tokens, with calm copy and balanced vertical space.",
+      "actual": "Overview tabs render with shadcn underline styling and empty states are present. Empty states are plain and visually sparse across large panels.",
+      "status": "partial",
+      "evidence": ["QA3-3340-OVERVIEW-D"]
+    },
+    {
+      "family": "dashboard-data-visuals",
+      "expected": "Metric cards, chart, map and heatmap should use Cosmo/shadcn styling while preserving readable analytics density.",
+      "actual": "Overview includes cards, chart, map and heatmap. It still visually resembles Umami analytics panels more than Cosmo legacy widget/dashboard language, but tokens are closer to shadcn than old Umami.",
+      "status": "partial",
+      "evidence": ["QA3-3340-OVERVIEW-D"]
+    },
+    {
+      "family": "responsive-composition",
+      "expected": "Mobile should preserve Cosmo brand, command hierarchy and comfortable shadcn spacing without awkward row stacking.",
+      "actual": "Login mobile is centered and stable. Websites mobile preserves brand/top bar and CTA, but table-to-card transformation needs row/action alignment polish.",
+      "status": "partial",
+      "evidence": ["QA3-3340-LOGIN-M", "QA3-3340-WEBSITES-M"]
+    }
+  ],
+  "blockers": [
+    {
+      "area": "unauthenticated /websites",
+      "status": "redirects to login",
+      "note": "Authenticated local visual capture succeeded after ephemeral local session."
+    }
+  ]
+}
