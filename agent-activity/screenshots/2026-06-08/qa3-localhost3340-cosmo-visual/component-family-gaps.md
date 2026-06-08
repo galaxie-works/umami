@@ -2,7 +2,9 @@
 
 Date: 2026-06-08
 Target: `localhost:3340`
-Hash under test: `860edf75`
+Hash under test: `610b4ec3`
+
+Runtime note: localhost capture used `610b4ec3` plus uncommitted local login-control changes in the working tree. QA3 did not author, stage or commit those code changes.
 Classification: `completed_with_findings / cosmo_shadcn_visual_qa / no_deploy_no_mutation`
 
 ## Evidence
@@ -13,8 +15,8 @@ Manifest:
 
 Screenshots:
 
-- `localhost3340-login-desktop.png`
-- `localhost3340-login-mobile.png`
+- `localhost3340-login-desktop-head610b4ec.png`
+- `localhost3340-login-mobile-head610b4ec.png`
 - `localhost3340-websites-desktop-auth.png`
 - `localhost3340-websites-mobile-auth.png`
 - `localhost3340-overview-desktop-auth.png`
@@ -28,7 +30,7 @@ Reference handling:
 
 | Gap id | Severity | Component family | Expected Cosmo/shadcn | Actual localhost:3340 | Evidence | Owner | Acceptance criteria |
 |---|---:|---|---|---|---|---|---|
-| QA3-3340-P1-001 | P1 | Auth login card | Centered Cosmo-branded shadcn login card with calm product copy and integrated polished footer controls. | Centered shadcn-like card exists, but logo/copy still read like legacy Umami admin tone. Language/theme controls are detached below card. | QA3-3340-LOGIN-D/M | Rhea UI | Login uses Cosmolytics/Cosmo brand mark/name, removes old admin-space copy, keeps card centered on desktop/mobile, and aligns language/theme controls with the auth composition. |
+| QA3-3340-P2-001 | P2 | Auth login card | Centered Cosmo-branded shadcn login card with calm product copy and integrated polished footer controls. | Centered shadcn-like card now shows Cosmolytics branding. Copy still reads like legacy Umami admin tone and language/theme controls are detached below card. | QA3-3340-LOGIN-D/M | Rhea UI | Login keeps Cosmolytics/Cosmo brand mark/name, removes old admin-space copy, keeps card centered on desktop/mobile, and aligns language/theme controls with the auth composition. |
 | QA3-3340-P2-002 | P2 | Shell/sidebar | Cosmo workspace shell, sidebar card brand, selected states, grouped navigation and bottom user control. | Desktop Websites and Overview mostly match Cosmo shell. Mobile top shell is compact and branded. | QA3-3340-WEBSITES-D/M, QA3-3340-OVERVIEW-D | Rhea UI | Keep current shell direction; verify all primary pages use same shell and no old Umami sidebar variants remain. |
 | QA3-3340-P2-003 | P2 | Page header/actions | shadcn page headers with consistent divider, CTA placement and action density. | Websites page is close. Overview header/date/filter controls still feel inherited from Umami analytics layout rather than Cosmo legacy dashboard language. | QA3-3340-WEBSITES-D, QA3-3340-OVERVIEW-D | Rhea UI + Orion PO | PO decides whether overview should remain Umami-native analytics layout or shift further toward Cosmo legacy dashboard composition. Header/action spacing should be consistent either way. |
 | QA3-3340-P2-004 | P2 | Cards/surfaces | shadcn border/radius/background, compact operational density and no heavy nested-card feel. | Desktop surfaces are mostly aligned. Mobile website rows become large cards and feel heavier than the desktop table. | QA3-3340-WEBSITES-D/M, QA3-3340-OVERVIEW-D | Rhea UI | Mobile row cards use tighter spacing, aligned action area and consistent card rhythm with desktop shadcn table. |
@@ -45,4 +47,4 @@ Reference handling:
 - No browser chrome/address bars are included in QA3 screenshots.
 - No code, deploy, restart, DB change, production change or data mutation was performed.
 
-Final status: `completed_with_findings / auth_card_p1 / shell_mostly_aligned / no_deploy_no_mutation`.
+Final status: `completed_with_findings / auth_card_p2_copy_footer_gap / shell_mostly_aligned / no_deploy_no_mutation`.

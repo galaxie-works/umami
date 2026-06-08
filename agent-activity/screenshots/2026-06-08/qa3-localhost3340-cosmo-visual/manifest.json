@@ -4,7 +4,8 @@
   "agent": "Codex QA3",
   "repo": "landing-ics/umami",
   "branch": "feature/cosmolytics-shadcn-invite-magic-login",
-  "head": "860edf75",
+  "head": "610b4ec3",
+  "runtime_state": "localhost capture used HEAD 610b4ec3 plus uncommitted local login-control changes in the working tree; code changes were not authored or committed by QA3.",
   "target": "localhost:3340",
   "classification": "completed_with_findings / cosmo_shadcn_visual_qa / no_deploy_no_mutation",
   "scope": [
@@ -27,7 +28,7 @@
   "screenshots": [
     {
       "id": "QA3-3340-LOGIN-D",
-      "file": "localhost3340-login-desktop.png",
+      "file": "localhost3340-login-desktop-head610b4ec.png",
       "route": "/login",
       "viewport": "desktop 1440x1000",
       "coverage": "Login card, language selector and theme control",
@@ -35,7 +36,7 @@
     },
     {
       "id": "QA3-3340-LOGIN-M",
-      "file": "localhost3340-login-mobile.png",
+      "file": "localhost3340-login-mobile-head610b4ec.png",
       "route": "/login",
       "viewport": "mobile 390x844",
       "coverage": "Mobile login card",
@@ -86,7 +87,7 @@
     {
       "family": "auth-login-card",
       "expected": "Cosmo/shadcn centered login card with Cosmolytics brand, quiet copy, card radius/shadow/border, primary button tokens and clean language/theme controls.",
-      "actual": "Centered shadcn-like card exists, but logo and copy still read as legacy Umami/admin tone. Language/theme controls sit below card instead of forming a polished Cosmo auth footer.",
+      "actual": "Centered shadcn-like card exists and now shows Cosmolytics branding. Copy still reads as legacy Umami/admin tone, and language/theme controls sit below card instead of forming a polished Cosmo auth footer.",
       "status": "partial",
       "evidence": ["QA3-3340-LOGIN-D", "QA3-3340-LOGIN-M"]
     },
@@ -121,7 +122,7 @@
     {
       "family": "forms-controls",
       "expected": "Inputs, search, language selector, theme control, filter button and date dropdown use consistent shadcn tokens, icon sizing and focus treatment.",
-      "actual": "Search/add/filter/date controls are mostly shadcn. Login form has shadcn input/button base but non-Cosmo copy and separated footer controls.",
+      "actual": "Search/add/filter/date controls are mostly shadcn. Login form has shadcn input/button base and Cosmolytics logo, but non-Cosmo copy and separated footer controls.",
       "status": "partial",
       "evidence": ["QA3-3340-LOGIN-D", "QA3-3340-WEBSITES-D", "QA3-3340-OVERVIEW-D"]
     },
