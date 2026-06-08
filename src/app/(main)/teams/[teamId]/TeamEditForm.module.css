@@ -1,0 +1,20 @@
+.advanced {
+  border-top: 1px solid var(--border-muted);
+  color: var(--text-primary);
+  padding-top: 12px;
+}
+
+.summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  list-style-position: inside;
+}
+
+.advancedBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
+}

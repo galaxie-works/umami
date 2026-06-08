@@ -11,6 +11,7 @@ import { IconLabel } from '@/components/common/IconLabel';
 import { useMessages, useTeam, useUpdateQuery } from '@/components/hooks';
 import { RefreshCw } from '@/components/icons';
 import { getRandomChars } from '@/lib/generate';
+import styles from './TeamEditForm.module.css';
 
 const generateId = () => `team_${getRandomChars(16)}`;
 
@@ -46,26 +47,31 @@ export function TeamEditForm({
       {({ setValue }) => {
         return (
           <>
-            <FormField name="id" label={t(labels.teamId)}>
-              <TextField isReadOnly allowCopy />
-            </FormField>
             <FormField name="name" label={t(labels.name)} rules={{ required: t(labels.required) }}>
               <TextField isReadOnly={!allowEdit} />
             </FormField>
-            {showAccessCode && (
-              <Row alignItems="flex-end" gap>
-                <FormField name="accessCode" label={t(labels.accessCode)} style={{ flex: 1 }}>
+            <details className={styles.advanced}>
+              <summary className={styles.summary}>Advanced</summary>
+              <div className={styles.advancedBody}>
+                <FormField name="id" label={t(labels.teamId)}>
                   <TextField isReadOnly allowCopy />
                 </FormField>
-                {allowEdit && (
-                  <Button
-                    onPress={() => setValue('accessCode', generateId(), { shouldDirty: true })}
-                  >
-                    <IconLabel icon={<RefreshCw />} label={t(labels.regenerate)} />
-                  </Button>
+                {showAccessCode && (
+                  <Row alignItems="flex-end" gap>
+                    <FormField name="accessCode" label={t(labels.accessCode)} style={{ flex: 1 }}>
+                      <TextField isReadOnly allowCopy />
+                    </FormField>
+                    {allowEdit && (
+                      <Button
+                        onPress={() => setValue('accessCode', generateId(), { shouldDirty: true })}
+                      >
+                        <IconLabel icon={<RefreshCw />} label={t(labels.regenerate)} />
+                      </Button>
+                    )}
+                  </Row>
                 )}
-              </Row>
-            )}
+              </div>
+            </details>
             {allowEdit && (
               <FormButtons justifyContent="flex-end">
                 <FormSubmitButton variant="primary" isPending={isPending}>
